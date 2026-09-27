@@ -23,6 +23,10 @@
     .viewport { flex: 1; width: 100%; position: relative; overflow: hidden; display: flex; flex-direction: column; align-items: center; justify-content: center; }
     #threeCanvas { width: 100%; height: 100%; display: block; }
 
+    #loadingBox { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #070510; color: #c084fc; font-size: 0.95rem; z-index: 20; font-weight: bold; gap: 10px; }
+    .spinner { width: 32px; height: 32px; border: 3px solid rgba(168,85,247,0.2); border-top-color: #c084fc; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
     .dialogue-box { position: absolute; bottom: 12px; width: 90%; background: rgba(18, 12, 34, 0.88); backdrop-filter: blur(10px); border: 1px solid var(--border); padding: 10px 16px; border-radius: 18px; font-size: 0.88rem; color: #eedaff; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.5); z-index: 10; }
 
     .footer { height: 60px; padding: 10px 16px; background: var(--panel); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; z-index: 10; }
@@ -31,7 +35,11 @@
     .btn-mic { background: rgba(168, 85, 247, 0.2); border: 1px solid var(--accent); font-size: 1.15rem; }
     .btn-send { background: linear-gradient(135deg, var(--accent), var(--pink)); font-size: 1rem; }
   </style>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Production Three.js + GLTFLoader + VRM 1.0 Bundle -->
+  <script src="https://unpkg.com/three@0.148.0/build/three.min.js"></script>
+  <script src="https://unpkg.com/three@0.148.0/examples/js/loaders/GLTFLoader.js"></script>
+  <script src="https://unpkg.com/@pixiv/three-vrm@1.0.9/lib/three-vrm.min.js"></script>
 </head>
 <body>
 
@@ -41,159 +49,148 @@
   </header>
 
   <main class="viewport" id="viewport">
+    <div id="loadingBox">
+      <div class="spinner"></div>
+      <span id="loadText">3D Ruchi Model Loading...</span>
+    </div>
     <canvas id="threeCanvas"></canvas>
     <div class="dialogue-box" id="dialogueText">
-      Namaskar Ruturaj! Mi real 3D engine madhe live ahe. 💜
+      नमस्कार Ruturaj! मी 3D मध्ये लोड होत आहे... 💜
     </div>
   </main>
 
   <footer class="footer">
     <button id="micBtn" class="btn btn-mic">🎙️</button>
-    <input type="text" id="userInput" placeholder="Ruchi shi bola..." autocomplete="off">
+    <input type="text" id="userInput" placeholder="रुचीशी बोला..." autocomplete="off">
     <button id="sendBtn" class="btn btn-send">➤</button>
   </footer>
 
   <script>
     const viewport = document.getElementById('viewport');
     const canvas = document.getElementById('threeCanvas');
+    const loadingBox = document.getElementById('loadingBox');
+    const loadText = document.getElementById('loadText');
     const dialogueText = document.getElementById('dialogueText');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const micBtn = document.getElementById('micBtn');
 
+    let currentVrm = null;
     let isSpeaking = false;
 
+    // Three.js Scene Setup
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(40, viewport.clientWidth / viewport.clientHeight, 0.1, 100);
-    camera.position.set(0, 1.45, 2.2);
+    const camera = new THREE.PerspectiveCamera(32, viewport.clientWidth / viewport.clientHeight, 0.1, 20);
+    camera.position.set(0.0, 1.35, 1.2); // Focused directly on Face & Bust
 
     const renderer = new THREE.WebGLRenderer({ canvas: canvas, antialias: true, alpha: true });
     renderer.setSize(viewport.clientWidth, viewport.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputEncoding = THREE.sRGBEncoding;
 
-    scene.add(new THREE.AmbientLight(0xffb8eb, 0.9));
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.2);
-    dirLight.position.set(2, 4, 3);
+    // Lights
+    scene.add(new THREE.AmbientLight(0xffffff, 0.8));
+    const dirLight = new THREE.DirectionalLight(0xfff5ea, 1.2);
+    dirLight.position.set(1, 2, 1.5).normalize();
     scene.add(dirLight);
 
-    const avatarGroup = new THREE.Group();
-    scene.add(avatarGroup);
+    const rimLight = new THREE.DirectionalLight(0xa855f7, 0.8);
+    rimLight.position.set(-1, 1.5, -1).normalize();
+    scene.add(rimLight);
 
-    const skinMat = new THREE.MeshStandardMaterial({ color: 0xffdfd4, roughness: 0.45 });
-    const hairMat = new THREE.MeshStandardMaterial({ color: 0x1b132a, roughness: 0.3 });
-    const clothMat = new THREE.MeshStandardMaterial({ color: 0x110e1c, roughness: 0.6 });
-    const eyeWhiteMat = new THREE.MeshBasicMaterial({ color: 0xffffff });
-    const pupilMat = new THREE.MeshBasicMaterial({ color: 0x38bdf8 });
-    const lipsMat = new THREE.MeshStandardMaterial({ color: 0xe11d48, roughness: 0.3 });
+    // Load Real VRM 3D Model
+    const loader = new THREE.GLTFLoader();
+    loader.register((parser) => new THREE_VRM.VRMLoaderPlugin(parser));
 
-    const headGeo = new THREE.SphereGeometry(0.24, 32, 32);
-    headGeo.scale(1, 1.15, 1.05);
-    const head = new THREE.Mesh(headGeo, skinMat);
-    head.position.set(0, 1.45, 0);
-    avatarGroup.add(head);
+    loader.load(
+      'assets/ruchi.vrm',
+      (gltf) => {
+        const vrm = gltf.userData.vrm;
+        currentVrm = vrm;
+        scene.add(vrm.scene);
 
-    const bangsGeo = new THREE.SphereGeometry(0.27, 32, 16);
-    bangsGeo.scale(1.05, 0.6, 1.05);
-    const bangs = new THREE.Mesh(bangsGeo, hairMat);
-    bangs.position.set(0, 1.62, 0.04);
-    avatarGroup.add(bangs);
+        // Turn to face front camera
+        vrm.scene.rotation.y = Math.PI;
 
-    const hairBackGeo = new THREE.CylinderGeometry(0.15, 0.32, 0.8, 24);
-    const hairBack = new THREE.Mesh(hairBackGeo, hairMat);
-    hairBack.position.set(0, 1.2, -0.15);
-    hairBack.rotation.x = 0.2;
-    avatarGroup.add(hairBack);
-
-    function createEye(x) {
-      const eyeG = new THREE.Group();
-      const white = new THREE.Mesh(new THREE.SphereGeometry(0.045, 16, 16), eyeWhiteMat);
-      white.scale.set(1.2, 1.5, 0.4);
-      eyeG.add(white);
-
-      const pupil = new THREE.Mesh(new THREE.SphereGeometry(0.025, 16, 16), pupilMat);
-      pupil.position.set(0, 0, 0.035);
-      pupil.scale.set(1, 1.3, 0.3);
-      eyeG.add(pupil);
-
-      const lid = new THREE.Mesh(new THREE.SphereGeometry(0.05, 16, 8), skinMat);
-      lid.scale.set(1.25, 0.2, 0.5);
-      lid.position.set(0, 0.05, 0.038);
-      eyeG.add(lid);
-
-      eyeG.position.set(x, 1.48, 0.21);
-      avatarGroup.add(eyeG);
-      return { lid };
-    }
-    const eyeL = createEye(-0.08);
-    const eyeR = createEye(0.08);
-
-    const mouthGeo = new THREE.CylinderGeometry(0.03, 0.03, 0.015, 16);
-    mouthGeo.scale(1.3, 0.4, 0.3);
-    const mouth = new THREE.Mesh(mouthGeo, lipsMat);
-    mouth.position.set(0, 1.33, 0.23);
-    avatarGroup.add(mouth);
-
-    const neck = new THREE.Mesh(new THREE.CylinderGeometry(0.065, 0.075, 0.14, 16), skinMat);
-    neck.position.set(0, 1.28, 0);
-    avatarGroup.add(neck);
-
-    const chest = new THREE.Mesh(new THREE.CylinderGeometry(0.18, 0.16, 0.3, 24), clothMat);
-    chest.position.set(0, 1.1, 0);
-    avatarGroup.add(chest);
-
-    const bustL = new THREE.Mesh(new THREE.SphereGeometry(0.085, 20, 20), clothMat);
-    bustL.position.set(-0.08, 1.14, 0.12);
-    avatarGroup.add(bustL);
-
-    const bustR = new THREE.Mesh(new THREE.SphereGeometry(0.085, 20, 20), clothMat);
-    bustR.position.set(0.08, 1.14, 0.12);
-    avatarGroup.add(bustR);
-
-    let blinkProgress = 0;
-    const clock = new THREE.Clock();
-
-    function renderLoop() {
-      requestAnimationFrame(renderLoop);
-      const t = clock.getElapsedTime();
-
-      const breath = Math.sin(t * 2.2) * 0.015;
-      avatarGroup.position.y = breath;
-      chest.scale.set(1 + breath * 1.5, 1, 1 + breath * 2);
-      bustL.position.z = 0.12 + breath * 0.8;
-      bustR.position.z = 0.12 + breath * 0.8;
-
-      head.rotation.y = Math.sin(t * 1.2) * 0.06;
-      head.rotation.z = Math.sin(t * 0.9) * 0.02;
-      hairBack.rotation.z = Math.sin(t * 1.5) * 0.04;
-
-      blinkProgress += 0.016;
-      if (blinkProgress > 3.2) {
-        eyeL.lid.scale.y = 1.2;
-        eyeR.lid.scale.y = 1.2;
-        if (blinkProgress > 3.35) {
-          eyeL.lid.scale.y = 0.2;
-          eyeR.lid.scale.y = 0.2;
-          blinkProgress = 0;
+        loadingBox.style.display = 'none';
+        speak("नमस्कार Ruturaj! मी रिअल 3D मध्ये आले आहे. माझे ओठ, केस आणि डोळे बघा!");
+      },
+      (progress) => {
+        if (progress.total > 0) {
+          const p = Math.round((progress.loaded / progress.total) * 100);
+          loadText.innerText = `Loading 3D Ruchi: ${p}%`;
         }
+      },
+      (error) => {
+        console.error(error);
+        loadText.innerText = "Error loading 3D model. Refresh again.";
       }
+    );
 
-      if (isSpeaking) {
-        const mouthScale = 0.6 + Math.abs(Math.sin(t * 22)) * 1.6;
-        mouth.scale.set(1.3, mouthScale, 0.5);
-      } else {
-        mouth.scale.set(1.3, 0.4, 0.3);
-      }
-
-      renderer.render(scene, camera);
-    }
-    renderLoop();
-
+    // Responsive Canvas
     window.addEventListener('resize', () => {
       camera.aspect = viewport.clientWidth / viewport.clientHeight;
       camera.updateProjectionMatrix();
       renderer.setSize(viewport.clientWidth, viewport.clientHeight);
     });
 
+    // Realistic Animation Physics Loop
+    const clock = new THREE.Clock();
+    let blinkTimer = 0;
+
+    function renderLoop() {
+      requestAnimationFrame(renderLoop);
+      const delta = clock.getDelta();
+      const t = clock.getElapsedTime();
+
+      if (currentVrm) {
+        currentVrm.update(delta);
+
+        // 1. Procedural Chest & Shoulder Breathing
+        if (currentVrm.humanoid) {
+          const chest = currentVrm.humanoid.getNormalizedBoneNode('chest');
+          if (chest) {
+            chest.rotation.x = Math.sin(t * 2.2) * 0.03;
+          }
+          const spine = currentVrm.humanoid.getNormalizedBoneNode('spine');
+          if (spine) {
+            spine.rotation.y = Math.sin(t * 0.9) * 0.015;
+          }
+          const head = currentVrm.humanoid.getNormalizedBoneNode('head');
+          if (head) {
+            head.rotation.x = Math.sin(t * 1.4) * 0.02;
+            head.rotation.z = Math.sin(t * 1.0) * 0.012;
+          }
+        }
+
+        // 2. Realistic Natural Eye Blinking
+        blinkTimer += delta;
+        if (blinkTimer > 3.2) {
+          const blinkVal = Math.sin((blinkTimer - 3.2) * Math.PI * 4);
+          if (currentVrm.expressionManager) {
+            currentVrm.expressionManager.setValue('blink', Math.max(0, blinkVal));
+          }
+          if (blinkTimer > 3.45) blinkTimer = 0;
+        }
+
+        // 3. Real-time Audio Lip-Sync (Mouth Sync)
+        if (currentVrm.expressionManager) {
+          if (isSpeaking) {
+            const mouthVal = (Math.sin(t * 20) + 1) * 0.45;
+            currentVrm.expressionManager.setValue('aa', mouthVal);
+            currentVrm.expressionManager.setValue('ih', mouthVal * 0.3);
+          } else {
+            currentVrm.expressionManager.setValue('aa', 0);
+            currentVrm.expressionManager.setValue('ih', 0);
+          }
+        }
+      }
+
+      renderer.render(scene, camera);
+    }
+    renderLoop();
+
+    // Natural Voice Engine
     let femaleVoice = null;
     function loadVoices() {
       const v = window.speechSynthesis.getVoices();
@@ -226,9 +223,9 @@
       userInput.value = '';
 
       if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator') || q.toLowerCase().includes('koni')) {
-        speak("Majhe creator aani developer Ruturaj ahet! Tyannich mala ya 3D avatar madhe banavla ahe! 💜");
+        speak("माझे क्रिएटर आणि डेव्हलपर Ruturaj आहेत! त्यांनीच मला या 3D अवतारात जिवंत केले आहे! 💜");
       } else {
-        speak(`Mi aikle: "${q}". Maze dole aani lips bagha, mi live boltey!`);
+        speak(`मी ऐकले: "${q}". माझे डोळे आणि ओठ तपासा, मी रिअल 3D मध्ये बोलतेय!`);
       }
     }
 
@@ -241,7 +238,7 @@
     if (SpeechRec) {
       const rec = new SpeechRec();
       rec.onresult = (e) => { userInput.value = e.results[0][0].transcript; handleUserInput(); };
-      micBtn.addEventListener('click', () => { dialogueText.innerText = "Mi aiktay, bola..."; rec.start(); });
+      micBtn.addEventListener('click', () => { dialogueText.innerText = "मी ऐकतेय, बोला..."; rec.start(); });
     }
   </script>
 </body>
