@@ -12,12 +12,12 @@
     .header h1 { font-size: 1.15rem; color: #c084fc; font-weight: bold; }
     .status { font-size: 0.75rem; color: #10b981; font-weight: bold; }
 
-    /* 3D WebGL Canvas Stage */
-    #canvasContainer { flex: 1; width: 100%; position: relative; background: radial-gradient(circle at 50% 30%, #1e1338, #070510 90%); }
+    #canvasContainer { flex: 1; width: 100%; position: relative; background: radial-gradient(circle at 50% 30%, #20133a, #070510 90%); }
     canvas { width: 100% !important; height: 100% !important; display: block; }
 
-    /* Loading overlay */
-    #loadingBox { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; background: #070510; color: #c084fc; font-size: 1rem; z-index: 5; font-weight: bold; }
+    #loadingBox { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; background: #070510; color: #c084fc; font-size: 1rem; z-index: 5; font-weight: bold; gap: 10px; }
+    .spinner { width: 36px; height: 36px; border: 3px solid rgba(168,85,247,0.2); border-top-color: #c084fc; border-radius: 50%; animation: spin 0.8s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
     .dialogue { position: absolute; bottom: 75px; left: 5%; width: 90%; background: rgba(18,12,34,0.88); backdrop-filter: blur(8px); border: 1px solid rgba(168,85,247,0.35); padding: 10px 16px; border-radius: 18px; font-size: 0.88rem; color: #eedaff; text-align: center; z-index: 10; box-shadow: 0 4px 20px rgba(0,0,0,0.5); }
 
@@ -28,10 +28,16 @@
     .btn-send { background: linear-gradient(135deg, #a855f7, #ec4899); }
   </style>
 
-  <!-- Three.js + GLTFLoader + VRM Library -->
-  <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/build/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.154.0/examples/js/loaders/GLTFLoader.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@2.0.6/lib/three-vrm.min.js"></script>
+  <!-- Modern Import Map for Three.js & VRM -->
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js",
+        "three/addons/": "https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/",
+        "@pixiv/three-vrm": "https://cdn.jsdelivr.net/npm/@pixiv/three-vrm@3.3.0/lib/three-vrm.module.js"
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -41,19 +47,27 @@
   </div>
 
   <div id="canvasContainer">
-    <div id="loadingBox">Loading 3D Ruchi Engine...</div>
-    <div class="dialogue" id="dialogueText">Ruturaj, mi real 3D avatar madhe load hotey... 💜</div>
+    <div id="loadingBox">
+      <div class="spinner"></div>
+      <span id="loadText">3D Ruchi लोड होत आहे...</span>
+    </div>
+    <div class="dialogue" id="dialogueText">नमस्कार Ruturaj! मी 3D मध्ये येत आहे... 💜</div>
   </div>
 
   <div class="footer">
     <button id="micBtn" class="btn btn-mic">🎙️</button>
-    <input type="text" id="userInput" placeholder="Ask Ruchi anything..." autocomplete="off">
+    <input type="text" id="userInput" placeholder="रुचीशी बोला..." autocomplete="off">
     <button id="sendBtn" class="btn btn-send">➤</button>
   </div>
 
-  <script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+    import { VRMLoaderPlugin, VRMUtils } from '@pixiv/three-vrm';
+
     const container = document.getElementById('canvasContainer');
     const loadingBox = document.getElementById('loadingBox');
+    const loadText = document.getElementById('loadText');
     const dialogueText = document.getElementById('dialogueText');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
@@ -62,46 +76,55 @@
     let currentVrm = null;
     let isSpeaking = false;
 
-    // Three.js Scene Setup
+    // Three.js Scene
     const scene = new THREE.Scene();
-    const camera = new THREE.PerspectiveCamera(30, container.clientWidth / container.clientHeight, 0.1, 20);
-    camera.position.set(0.0, 1.25, 1.25); // Focus on face and upper chest
+    const camera = new THREE.PerspectiveCamera(32, container.clientWidth / container.clientHeight, 0.1, 20);
+    camera.position.set(0.0, 1.35, 1.15); // Focused framing for head and bust
 
     const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
     container.appendChild(renderer.domElement);
 
-    // Dynamic Lights
-    const dirLight = new THREE.DirectionalLight(0xffffff, 1.4);
-    dirLight.position.set(1.0, 2.0, 1.0).normalize();
+    // Realistic Lighting
+    const dirLight = new THREE.DirectionalLight(0xffffff, 2.0);
+    dirLight.position.set(1.0, 2.5, 1.5);
     scene.add(dirLight);
-    scene.add(new THREE.AmbientLight(0x9333ea, 0.9));
 
-    // Load VRM Model
-    const loader = new THREE.GLTFLoader();
-    loader.register((parser) => new THREE_VRM.VRMLoaderPlugin(parser));
+    const backLight = new THREE.DirectionalLight(0x00c8ff, 1.2);
+    backLight.position.set(-1.0, 2.0, -1.0);
+    scene.add(backLight);
+
+    scene.add(new THREE.AmbientLight(0xffb8eb, 1.2));
+
+    // Loader with VRM Plugin
+    const loader = new GLTFLoader();
+    loader.register((parser) => new VRMLoaderPlugin(parser));
 
     loader.load(
       'assets/ruchi.vrm',
       (gltf) => {
         const vrm = gltf.userData.vrm;
+        VRMUtils.removeUnnecessaryVertices(gltf.scene);
+        VRMUtils.removeUnnecessaryJoints(gltf.scene);
+        VRMUtils.rotateVRM0(vrm);
+
         currentVrm = vrm;
         scene.add(vrm.scene);
-        vrm.scene.rotation.y = Math.PI; // Face towards camera
+
         loadingBox.style.display = 'none';
-        speak("Namaskar Ruturaj! Mi real 3D Ruchi ahe. Paha maze tond aani dole halat ahet.");
+        speak("नमस्कार Ruturaj! मी तुमची रिअल 3D मैत्रीण रुची आहे. माझे डोळे आणि ओठ तपासा!");
       },
       (progress) => {
         if (progress.total > 0) {
-          const p = Math.round((progress.loaded / progress.total) * 100);
-          loadingBox.innerText = `Loading 3D Ruchi: ${p}%`;
-        } else {
-          loadingBox.innerText = `Loading 3D Ruchi Engine...`;
+          const pct = Math.round((progress.loaded / progress.total) * 100);
+          loadText.innerText = `3D Ruchi लोड होत आहे: ${pct}%`;
         }
       },
       (error) => {
-        loadingBox.innerText = "Error loading 3D VRM file.";
+        console.error(error);
+        loadText.innerText = "मॉडेल लोड करताना त्रुटी आली. कृपया रिफ्रेश करा.";
       }
     );
 
@@ -112,7 +135,7 @@
       renderer.setSize(container.clientWidth, container.clientHeight);
     });
 
-    // Render Loop & Physics
+    // 3D Motion, Breathing & Lip-Sync Loop
     const clock = new THREE.Clock();
     let blinkTimer = 0;
 
@@ -128,31 +151,38 @@
         if (currentVrm.humanoid) {
           const chest = currentVrm.humanoid.getNormalizedBoneNode('chest');
           if (chest) {
-            chest.rotation.x = Math.sin(time * 2.2) * 0.04;
+            chest.rotation.x = Math.sin(time * 2.2) * 0.035;
           }
           const spine = currentVrm.humanoid.getNormalizedBoneNode('spine');
           if (spine) {
-            spine.rotation.y = Math.sin(time * 0.9) * 0.02;
+            spine.rotation.y = Math.sin(time * 0.9) * 0.015;
+          }
+          const head = currentVrm.humanoid.getNormalizedBoneNode('head');
+          if (head) {
+            head.rotation.x = Math.sin(time * 1.5) * 0.02;
+            head.rotation.z = Math.sin(time * 1.0) * 0.015;
           }
         }
 
-        // Auto Eye Blink Loop
+        // Procedural Eye Blink
         blinkTimer += delta;
-        if (blinkTimer > 3.4) {
-          const blinkVal = Math.sin((blinkTimer - 3.4) * Math.PI * 4);
+        if (blinkTimer > 3.2) {
+          const blinkVal = Math.sin((blinkTimer - 3.2) * Math.PI * 4);
           if (currentVrm.expressionManager) {
             currentVrm.expressionManager.setValue('blink', Math.max(0, blinkVal));
           }
-          if (blinkTimer > 3.65) blinkTimer = 0;
+          if (blinkTimer > 3.45) blinkTimer = 0;
         }
 
-        // Real-Time Lip-Sync
+        // Live Speech Lip-Sync (Mouth Sync)
         if (currentVrm.expressionManager) {
           if (isSpeaking) {
             const mouthVal = (Math.sin(time * 20) + 1) * 0.45;
             currentVrm.expressionManager.setValue('aa', mouthVal);
+            currentVrm.expressionManager.setValue('ih', mouthVal * 0.3);
           } else {
             currentVrm.expressionManager.setValue('aa', 0);
+            currentVrm.expressionManager.setValue('ih', 0);
           }
         }
       }
@@ -161,11 +191,11 @@
     }
     animate();
 
-    // Natural Female Voice Setup
+    // Natural Voice Engine
     let femaleVoice = null;
     function loadVoices() {
       const v = window.speechSynthesis.getVoices();
-      femaleVoice = v.find(x => x.name.includes("Female") || x.name.includes("Google") || x.name.includes("Samantha") || x.name.includes("Zira")) || v[0];
+      femaleVoice = v.find(x => (x.name.includes("Female") || x.name.includes("Google") || x.name.includes("Samantha")) && !x.name.includes("Male")) || v[0];
     }
     if ('speechSynthesis' in window) {
       window.speechSynthesis.onvoiceschanged = loadVoices;
@@ -188,26 +218,28 @@
       window.speechSynthesis.speak(ut);
     }
 
-    sendBtn.addEventListener('click', () => {
+    function handleUserInput() {
       const q = userInput.value.trim();
       if (!q) return;
       userInput.value = '';
-      if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator')) {
-        speak("Ruturaj majhe creator ahet! Tyannich mala 3D banavla ahe 💜");
+      if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator') || q.toLowerCase().includes('koni')) {
+        speak("माझे क्रिएटर आणि डेव्हलपर Ruturaj आहेत! त्यांनीच मला रिअल 3D मध्ये बनवले आहे! 💜");
       } else {
-        speak(`Mi aikle: "${q}". Mi tumchya samor real 3D madhe bolat ahe!`);
+        speak(`मी ऐकले: "${q}". मी तुमच्यासमोर थेट 3D मध्ये बोलत आहे!`);
       }
-    });
+    }
 
+    sendBtn.addEventListener('click', handleUserInput);
     userInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendBtn.click();
+      if (e.key === 'Enter') handleUserInput();
     });
 
+    // Voice Mic
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRec) {
       const rec = new SpeechRec();
-      rec.onresult = (e) => { userInput.value = e.results[0][0].transcript; sendBtn.click(); };
-      micBtn.addEventListener('click', () => { dialogueText.innerText = "Aiktay, bola..."; rec.start(); });
+      rec.onresult = (e) => { userInput.value = e.results[0][0].transcript; handleUserInput(); };
+      micBtn.addEventListener('click', () => { dialogueText.innerText = "मी ऐकतेय, बोला..."; rec.start(); });
     }
   </script>
 </body>
