@@ -3,107 +3,68 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - Live Virtual Companion</title>
-  <link rel="stylesheet" href="css/style.css?v=6">
+  <title>Ruchi AI</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
+    body { background: #080a10; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .header { padding: 12px 16px; background: #121620; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(255,255,255,0.1); }
+    .header h2 { font-size: 1.1rem; background: linear-gradient(90deg, #ff529a, #00c8ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .call-btn { background: linear-gradient(135deg, #ff529a, #00c8ff); border: none; padding: 8px 16px; border-radius: 20px; color: #fff; font-weight: bold; cursor: pointer; }
+    .chat-box { flex: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .msg { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; }
+    .ruchi-msg { align-self: flex-start; background: rgba(255,255,255,0.1); }
+    .user-msg { align-self: flex-end; background: linear-gradient(135deg, #ff529a, #00c8ff); }
+    .footer { padding: 10px 14px; background: #121620; display: flex; gap: 8px; border-top: 1px solid rgba(255,255,255,0.1); }
+    .footer input { flex: 1; background: #080a10; border: 1px solid rgba(255,255,255,0.2); border-radius: 20px; padding: 10px 14px; color: #fff; outline: none; }
+    .footer button { border: none; border-radius: 50%; width: 42px; height: 42px; cursor: pointer; }
+    .send-btn { background: #ff529a; color: #fff; }
+
+    /* Video Call Stage */
+    .call-screen { position: fixed; inset: 0; background: #0a0c14; z-index: 999; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; }
+    .hide { display: none !important; }
+    .avatar-wrapper { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
+    canvas { border-radius: 24px; box-shadow: 0 0 30px rgba(0, 200, 255, 0.4); max-width: 90vw; height: auto; }
+    .call-subtitles { margin-top: 15px; background: rgba(0,0,0,0.6); padding: 8px 16px; border-radius: 20px; color: #00e1ff; font-size: 0.9rem; text-align: center; }
+    .controls { display: flex; justify-content: center; gap: 14px; padding-bottom: 20px; }
+    .ctrl-btn { min-width: 60px; height: 48px; border-radius: 24px; border: none; font-weight: bold; cursor: pointer; color: #fff; padding: 0 16px; }
+    .c-smile { background: #5c2466; }
+    .c-cry { background: #662438; }
+    .c-end { background: #eb3b5a; }
+  </style>
 </head>
 <body>
-  <div class="app-container">
-    <header class="app-header">
-      <div class="brand">
-        <div class="avatar-mini-circle">🌸</div>
-        <div>
-          <h2>Ruchi AI</h2>
-          <span class="status-indicator">● Active (Natural Engine)</span>
-        </div>
-      </div>
-      <div class="header-actions">
-        <button id="startCallBtn" class="call-action-btn">Live Video Call</button>
-      </div>
-    </header>
-
-    <main class="chat-container" id="chatContainer">
-      <div class="msg ruchi-msg">
-        Hello Ruturaj! Tap Live Video Call above to see my eyes blink, lips move, and real-time expressions.
-      </div>
-    </main>
-
-    <footer class="input-container">
-      <button id="voiceChatBtn" class="voice-btn" title="Voice Input">🎙️</button>
-      <input type="text" id="userInput" placeholder="Speak or type to Ruchi..." autocomplete="off">
-      <button id="sendBtn" class="send-btn">➤</button>
-    </footer>
+  <div class="header">
+    <h2>Ruchi AI</h2>
+    <button id="openCallBtn" class="call-btn">Video Call</button>
+  </div>
+  
+  <div class="chat-box" id="chatBox">
+    <div class="msg ruchi-msg">Namaskar Ruturaj! Video call start karnya sathi varcha button daba.</div>
   </div>
 
-  <!-- Fullscreen Live Interactive Video Call Screen -->
-  <div id="videoCallModal" class="video-call-modal hide">
-    <div class="call-overlay-header">
-      <div class="call-user-info">
-        <h3>Ruchi (Live Dynamic)</h3>
-        <span class="call-pulse">Live Motion Engine Active</span>
-      </div>
-      <button id="endCallBtn" class="end-call-btn">✕</button>
+  <div class="footer">
+    <input type="text" id="userInput" placeholder="Type here...">
+    <button id="sendBtn" class="send-btn">➤</button>
+  </div>
+
+  <div id="callScreen" class="call-screen hide">
+    <div style="display:flex; justify-content:space-between; align-items:center;">
+      <span style="color:#00ff88; font-size:0.85rem;">● Ruchi Live AI</span>
+      <button id="closeCallBtn" style="background:none; border:none; color:#fff; font-size:1.2rem; cursor:pointer;">✕</button>
     </div>
 
-    <!-- Live Animated Character Viewport -->
-    <div class="anime-stage">
-      <div class="char-motion-box" id="charBody">
-        <!-- Hair Ambient Layer -->
-        <div class="anime-hair-bg"></div>
-
-        <!-- Head & Face -->
-        <div class="anime-head">
-          <div class="anime-bangs"></div>
-
-          <!-- Dynamic Blinking Eyes -->
-          <div class="eyes-wrap">
-            <div class="eye left-eye">
-              <div class="pupil"></div>
-              <div class="eye-reflection"></div>
-            </div>
-            <div class="eye right-eye">
-              <div class="pupil"></div>
-              <div class="eye-reflection"></div>
-            </div>
-          </div>
-
-          <!-- Realistic Tears Flow -->
-          <div id="tearsWrap" class="tears-layer hide">
-            <div class="tear tear-l"></div>
-            <div class="tear tear-r"></div>
-          </div>
-
-          <!-- Blush -->
-          <div class="cheeks c-left"></div>
-          <div class="cheeks c-right"></div>
-
-          <!-- Dynamic Moving Lips (Lip-Sync Engine) -->
-          <div id="animeLips" class="dynamic-lips neutral">
-            <div class="inner-mouth"></div>
-          </div>
-        </div>
-
-        <!-- Upper Torso & Silhouette -->
-        <div class="anime-neck"></div>
-        <div class="anime-torso">
-          <div class="anime-bust">
-            <div class="bust-c left"></div>
-            <div class="bust-c right"></div>
-          </div>
-        </div>
-      </div>
-
-      <div id="subtitlesBox" class="subtitles-box">Connecting live feed...</div>
+    <div class="avatar-wrapper">
+      <canvas id="animeCanvas" width="340" height="420"></canvas>
+      <div id="subtitles" class="call-subtitles">Listening to you...</div>
     </div>
 
-    <!-- Call Controls -->
-    <div class="call-controls">
-      <button id="btnSmile" class="ctrl-btn smile">Happy</button>
-      <button id="callMicBtn" class="ctrl-btn mic">🎙️</button>
-      <button id="btnCry" class="ctrl-btn sad">Sad</button>
-      <button id="hangupBtn" class="ctrl-btn end">End</button>
+    <div class="controls">
+      <button id="smileBtn" class="ctrl-btn c-smile">Smile</button>
+      <button id="cryBtn" class="ctrl-btn c-cry">Cry</button>
+      <button id="hangupBtn" class="ctrl-btn c-end">End</button>
     </div>
   </div>
 
-  <script src="js/app.js"></script>
+  <script src="js/app.js?v=7"></script>
 </body>
 </html>

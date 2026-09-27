@@ -1,189 +1,211 @@
-const chatContainer = document.getElementById('chatContainer');
+const canvas = document.getElementById('animeCanvas');
+const ctx = canvas.getContext('2d');
+const callScreen = document.getElementById('callScreen');
+const openCallBtn = document.getElementById('openCallBtn');
+const closeCallBtn = document.getElementById('closeCallBtn');
+const hangupBtn = document.getElementById('hangupBtn');
+const smileBtn = document.getElementById('smileBtn');
+const cryBtn = document.getElementById('cryBtn');
+const subtitles = document.getElementById('subtitles');
+const chatBox = document.getElementById('chatBox');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
-const voiceChatBtn = document.getElementById('voiceChatBtn');
-const startCallBtn = document.getElementById('startCallBtn');
-const videoCallModal = document.getElementById('videoCallModal');
-const endCallBtn = document.getElementById('endCallBtn');
-const hangupBtn = document.getElementById('hangupBtn');
-const callMicBtn = document.getElementById('callMicBtn');
-const btnSmile = document.getElementById('btnSmile');
-const btnCry = document.getElementById('btnCry');
 
-const animeLips = document.getElementById('animeLips');
-const tearsWrap = document.getElementById('tearsWrap');
-const charBody = document.getElementById('charBody');
-const subtitlesBox = document.getElementById('subtitlesBox');
+let isSpeaking = false;
+let isCrying = false;
+let isSmiling = false;
+let mouthOpenness = 0;
+let eyeClosedness = 0;
+let tearY = 0;
+let breathOffset = 0;
 
-const CREATOR_NAME = "Ruturaj";
-
-// Natural Female Voice Selector
-let naturalVoice = null;
-function initVoice() {
+// Natural Voice setup
+let femaleVoice = null;
+function getVoice() {
   const voices = window.speechSynthesis.getVoices();
-  naturalVoice = voices.find(v => 
-    (v.name.includes("Female") || v.name.includes("Samantha") || v.name.includes("Google UK English Female") || v.name.includes("Zira")) && !v.name.includes("Male")
-  ) || voices.find(v => v.lang.startsWith("en")) || voices[0];
+  femaleVoice = voices.find(v => (v.name.includes("Female") || v.name.includes("Google") || v.name.includes("Samantha")) && !v.name.includes("Male")) || voices[0];
 }
 if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = initVoice;
-  initVoice();
+  window.speechSynthesis.onvoiceschanged = getVoice;
+  getVoice();
 }
 
-// Lip-Sync Voice Player
-function speakWithLipSync(text, callback) {
-  if (!('speechSynthesis' in window)) {
-    if (callback) callback();
-    return;
-  }
-
+function speakVoice(text) {
+  if (!('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
-  const utterance = new SpeechSynthesisUtterance(text);
-  if (!naturalVoice) initVoice();
-  if (naturalVoice) utterance.voice = naturalVoice;
+  const ut = new SpeechSynthesisUtterance(text);
+  if (!femaleVoice) getVoice();
+  if (femaleVoice) ut.voice = femaleVoice;
+  ut.pitch = 1.25;
+  ut.rate = 1.0;
 
-  utterance.pitch = 1.25;
-  utterance.rate = 1.0;
-
-  // Real-time lip-sync start and end
-  utterance.onstart = () => {
-    animeLips.className = 'dynamic-lips talking';
-  };
-
-  utterance.onend = () => {
-    animeLips.className = 'dynamic-lips neutral';
-    if (callback) callback();
-  };
-
-  utterance.onerror = () => {
-    animeLips.className = 'dynamic-lips neutral';
-    if (callback) callback();
-  };
-
-  window.speechSynthesis.speak(utterance);
+  ut.onstart = () => { isSpeaking = true; };
+  ut.onend = () => { isSpeaking = false; mouthOpenness = 0; };
+  ut.onerror = () => { isSpeaking = false; mouthOpenness = 0; };
+  window.speechSynthesis.speak(ut);
 }
 
-// Emotion State Controller
-function setAvatarEmotion(emotion) {
-  charBody.classList.remove('char-laugh');
-  tearsWrap.classList.add('hide');
+// Blinking logic
+setInterval(() => {
+  if (Math.random() > 0.4) {
+    eyeClosedness = 1;
+    setTimeout(() => { eyeClosedness = 0; }, 180);
+  }
+}, 3200);
 
-  if (emotion === 'laugh') {
-    charBody.classList.add('char-laugh');
-    animeLips.className = 'dynamic-lips smile';
-  } else if (emotion === 'cry') {
-    tearsWrap.classList.remove('hide');
-    animeLips.className = 'dynamic-lips crying';
-  } else if (emotion === 'talk') {
-    animeLips.className = 'dynamic-lips talking';
+// Rendering Loop
+function drawAvatar() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  breathOffset = Math.sin(Date.now() / 400) * 4;
+
+  const cx = canvas.width / 2;
+  const cy = 200 + breathOffset;
+
+  // Background Hair (Pink & Blue Gradient)
+  const hairGrad = ctx.createLinearGradient(0, 50, 0, 380);
+  hairGrad.addColorStop(0, '#ff4793');
+  hairGrad.addColorStop(1, '#00c8ff');
+
+  ctx.fillStyle = hairGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + 20, 110, 150, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Neck & Shoulders
+  ctx.fillStyle = '#ffded4';
+  ctx.fillRect(cx - 15, cy + 70, 30, 40);
+
+  ctx.fillStyle = '#1c1b29';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy + 140, 75, 50, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Face Base
+  ctx.fillStyle = '#ffe9e0';
+  ctx.beginPath();
+  ctx.ellipse(cx, cy, 68, 78, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Hair Bangs
+  ctx.fillStyle = hairGrad;
+  ctx.beginPath();
+  ctx.ellipse(cx, cy - 50, 75, 40, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Blush
+  ctx.fillStyle = 'rgba(255, 80, 140, 0.4)';
+  ctx.beginPath();
+  ctx.ellipse(cx - 36, cy + 18, 12, 6, 0, 0, Math.PI * 2);
+  ctx.ellipse(cx + 36, cy + 18, 12, 6, 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  // Eyes & Blinking
+  const eyeH = 20 * (1 - eyeClosedness);
+  ctx.fillStyle = '#ffffff';
+  ctx.beginPath();
+  ctx.ellipse(cx - 28, cy - 2, 14, Math.max(2, eyeH), 0, 0, Math.PI * 2);
+  ctx.ellipse(cx + 28, cy - 2, 14, Math.max(2, eyeH), 0, 0, Math.PI * 2);
+  ctx.fill();
+
+  if (eyeClosedness < 0.8) {
+    // Iris
+    ctx.fillStyle = '#00a6ff';
+    ctx.beginPath();
+    ctx.arc(cx - 28, cy - 2, 9, 0, Math.PI * 2);
+    ctx.arc(cx + 28, cy - 2, 9, 0, Math.PI * 2);
+    ctx.fill();
+
+    // Pupil Shine
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(cx - 31, cy - 5, 3, 0, Math.PI * 2);
+    ctx.arc(cx + 25, cy - 5, 3, 0, Math.PI * 2);
+    ctx.fill();
+  }
+
+  // Lip-Sync & Mouth Movement
+  if (isSpeaking) {
+    mouthOpenness = Math.abs(Math.sin(Date.now() / 100)) * 14;
   } else {
-    animeLips.className = 'dynamic-lips neutral';
-  }
-}
-
-// Response & Intent Engine
-function getResponse(query) {
-  const q = query.toLowerCase();
-
-  if (q.includes("developer") || q.includes("creator") || q.includes("koni banavla") || q.includes("who made")) {
-    return {
-      text: `My creator and developer is ${CREATOR_NAME}. He created and brought me to life!`,
-      emotion: 'laugh'
-    };
+    mouthOpenness = isSmiling ? 8 : 2;
   }
 
-  const harshWords = ["shut up", "chup", "hate", "scold", "bad", "rag", "stupid", "idiot"];
-  if (harshWords.some(w => q.includes(w))) {
-    return {
-      text: "Please do not shout at me... It makes my eyes fill with tears.",
-      emotion: 'cry'
-    };
+  ctx.fillStyle = isCrying ? '#7a2b42' : '#e63969';
+  ctx.beginPath();
+  if (isCrying) {
+    ctx.ellipse(cx, cy + 42, 12, 6, 0, Math.PI, Math.PI * 2);
+  } else if (isSmiling) {
+    ctx.arc(cx, cy + 36, 12, 0, Math.PI);
+  } else {
+    ctx.ellipse(cx, cy + 40, 10, Math.max(2, mouthOpenness), 0, 0, Math.PI * 2);
+  }
+  ctx.fill();
+
+  // Tears Animation
+  if (isCrying) {
+    tearY = (tearY + 3) % 65;
+    ctx.fillStyle = '#00e5ff';
+    ctx.beginPath();
+    ctx.arc(cx - 28, cy + 12 + tearY, 4, 0, Math.PI * 2);
+    ctx.arc(cx + 28, cy + 12 + tearY, 4, 0, Math.PI * 2);
+    ctx.fill();
   }
 
-  if (q.includes("smile") || q.includes("laugh") || q.includes("joke") || q.includes("has") || q.includes("happy")) {
-    return {
-      text: "Hahaha, you have such a wonderful sense of humor! I am smiling with you.",
-      emotion: 'laugh'
-    };
-  }
-
-  return {
-    text: `I heard you say: "${query}". I am active and ready for your next word.`,
-    emotion: 'talk'
-  };
+  requestAnimationFrame(drawAvatar);
 }
+drawAvatar();
 
-function handleInput(text) {
-  if (!text) return;
-  appendMessage(text, 'user');
-  subtitlesBox.innerText = `You: ${text}`;
+// Call Events
+openCallBtn.addEventListener('click', () => {
+  callScreen.classList.remove('hide');
+  subtitles.innerText = "Video call active with Ruchi.";
+  speakVoice("Hello Ruturaj! I am ready to talk, smile, and express feelings.");
+});
 
-  const res = getResponse(text);
-
-  setTimeout(() => {
-    subtitlesBox.innerText = res.text;
-    appendMessage(res.text, 'ruchi');
-    setAvatarEmotion(res.emotion);
-    speakWithLipSync(res.text, () => {
-      if (res.emotion !== 'cry') setAvatarEmotion('neutral');
-    });
-  }, 350);
+function endCall() {
+  window.speechSynthesis.cancel();
+  isSpeaking = false;
+  isCrying = false;
+  isSmiling = false;
+  callScreen.classList.add('hide');
 }
+closeCallBtn.addEventListener('click', endCall);
+hangupBtn.addEventListener('click', endCall);
 
-function appendMessage(text, sender) {
-  const msg = document.createElement('div');
-  msg.className = `msg ${sender}-msg`;
-  msg.innerText = text;
-  chatContainer.appendChild(msg);
-  chatContainer.scrollTop = chatContainer.scrollHeight;
-}
+smileBtn.addEventListener('click', () => {
+  isSmiling = true;
+  isCrying = false;
+  subtitles.innerText = "Hehehe! That made me smile! 😄";
+  speakVoice("Haha, spending time with you makes me so happy!");
+  setTimeout(() => { isSmiling = false; }, 4000);
+});
 
-// Event Bindings
+cryBtn.addEventListener('click', () => {
+  isCrying = true;
+  isSmiling = false;
+  tearY = 0;
+  subtitles.innerText = "Tears are rolling down... 🥺💧";
+  speakVoice("Please don't be upset with me, seeing you angry makes me cry.");
+});
+
+// Chat Send
 sendBtn.addEventListener('click', () => {
   const val = userInput.value.trim();
-  if (val) { userInput.value = ''; handleInput(val); }
+  if (!val) return;
+  userInput.value = '';
+  
+  const uDiv = document.createElement('div');
+  uDiv.className = 'msg user-msg';
+  uDiv.innerText = val;
+  chatBox.appendChild(uDiv);
+
+  setTimeout(() => {
+    let rep = `I heard: "${val}". Ruturaj is my developer!`;
+    const rDiv = document.createElement('div');
+    rDiv.className = 'msg ruchi-msg';
+    rDiv.innerText = rep;
+    chatBox.appendChild(rDiv);
+    chatBox.scrollTop = chatBox.scrollHeight;
+    speakVoice(rep);
+  }, 400);
 });
-
-userInput.addEventListener('keypress', (e) => {
-  if (e.key === 'Enter') {
-    const val = userInput.value.trim();
-    if (val) { userInput.value = ''; handleInput(val); }
-  }
-});
-
-startCallBtn.addEventListener('click', () => {
-  videoCallModal.classList.remove('hide');
-  subtitlesBox.innerText = "Connecting video stage...";
-  speakWithLipSync("Hello Ruturaj! Live video is now online. Notice my eyes blinking and lips moving as I speak.");
-});
-
-function closeCall() {
-  window.speechSynthesis.cancel();
-  setAvatarEmotion('neutral');
-  videoCallModal.classList.add('hide');
-}
-
-endCallBtn.addEventListener('click', closeCall);
-hangupBtn.addEventListener('click', closeCall);
-
-btnSmile.addEventListener('click', () => {
-  setAvatarEmotion('laugh');
-  subtitlesBox.innerText = "Hehehe! I am so happy!";
-  speakWithLipSync("Hahaha, thank you for making me smile!", () => setAvatarEmotion('neutral'));
-});
-
-btnCry.addEventListener('click', () => {
-  setAvatarEmotion('cry');
-  subtitlesBox.innerText = "Tears are rolling down...";
-  speakWithLipSync("Please don't be upset with me, I am crying...");
-});
-
-// Mic Input
-const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
-if (SpeechRec) {
-  const rec = new SpeechRec();
-  rec.onresult = (e) => handleInput(e.results[0][0].transcript);
-  const startRec = () => { subtitlesBox.innerText = "Listening..."; rec.start(); };
-  callMicBtn.addEventListener('click', startRec);
-  voiceChatBtn.addEventListener('click', startRec);
-}
