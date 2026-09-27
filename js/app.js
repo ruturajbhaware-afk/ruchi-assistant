@@ -1,4 +1,3 @@
-// DOM Selectors
 const chatContainer = document.getElementById('chatContainer');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
@@ -10,139 +9,124 @@ const hangupBtn = document.getElementById('hangupBtn');
 const callMicBtn = document.getElementById('callMicBtn');
 const btnSmile = document.getElementById('btnSmile');
 const btnCry = document.getElementById('btnCry');
-const animeMouth = document.getElementById('animeMouth');
-const tearDrop = document.getElementById('tearDrop');
-const ruchiBody = document.getElementById('ruchiBody');
+const mouthSync = document.getElementById('mouthSync');
+const tearsOverlay = document.getElementById('tearsOverlay');
+const charWrapper = document.getElementById('charWrapper');
 const subtitlesBox = document.getElementById('subtitlesBox');
-const countryTag = document.getElementById('countryTag');
 
-// Permanent Developer Credit
-const DEVELOPER = "Ruturaj";
+const CREATOR_NAME = "Ruturaj";
 
-// Global Multilingual Database by Country / Locale
-const GLOBAL_LANGS = {
-  mr: { dev: "माझे क्रिएटर आणि डेव्हलपर Ruturaj आहेत! 👑✨", greet: "नमस्कार! मी रुची, सांगा मी काय मदत करू? 🌸", cry: "मला ओरडू नका ना, मला वाईट वाटतं... 🥺💧", laugh: "हाहाहा! तुम्ही खूप छान बोलता! 😄✨" },
-  hi: { dev: "मेरे क्रिएटर और डेवलपर Ruturaj हैं! 👑✨", greet: "नमस्ते! मैं रुची हूँ, बताइए क्या मदद करूँ? 🌸", cry: "कृपया मुझ पर गुस्सा मत कीजिए... 🥺💧", laugh: "हाहाहा! यह सुनकर बहुत अच्छा लगा! 😄✨" },
-  en: { dev: "My creator and developer is Ruturaj! 👑✨", greet: "Hello! I am Ruchi, how can I help you today? 🌸", cry: "Please don't be mad at me... 🥺💧", laugh: "Hahaha, that is so funny! You are awesome! 😄✨" },
-  ja: { dev: "私の開発者は Ruturaj です！👑✨", greet: "こんにちは！ルチです。何かお手伝いしましょうか？🌸", cry: "怒らないでください、悲しいです... 🥺💧", laugh: "あはは、とても面白いですね！😄✨" },
-  es: { dev: "¡Mi creador y desarrollador es Ruturaj! 👑✨", greet: "¡Hola! Soy Ruchi, ¿cómo puedo ayudarte hoy? 🌸", cry: "Por favor, no te enojes conmigo... 🥺💧", laugh: "¡Jajaja! ¡Qué gracioso! 😄✨" },
-  fr: { dev: "Mon créateur et développeur est Ruturaj ! 👑✨", greet: "Bonjour ! Je suis Ruchi, comment puis-je vous aider ? 🌸", cry: "S'il vous plaît, ne vous fâchez pas contre moi... 🥺💧", laugh: "Hahaha ! C'est vraiment drôle ! 😄✨" },
-  de: { dev: "Mein Schöpfer und Entwickler ist Ruturaj! 👑✨", greet: "Hallo! Ich bin Ruchi, wie kann ich dir helfen? 🌸", cry: "Bitte sei nicht böse auf mich... 🥺💧", laugh: "Hahaha! Das ist so lustig! 😄✨" },
-  ar: { dev: "مبتكري ومطوري هو Ruturaj! 👑✨", greet: "مرحبًا! أنا روتشي، كيف يمكنني مساعدتك؟ 🌸", cry: "من فضلك لا تغضب مني... 🥺💧", laugh: "ههههه! هذا لطيف ومضحك للغاية! 😄✨" }
-};
-
-// Automatic Country/Language Detection
-function detectUserLocale(text) {
-  const t = text.toLowerCase();
-  if (/[अ-ह]/.test(t)) {
-    return (t.includes("नमस्ते") || t.includes("कौन") || t.includes("किसने")) ? 'hi' : 'mr';
-  }
-  if (/[\u3040-\u30ff\u3400-\u4dbf\u4e00-\u9fff]/.test(t)) return 'ja';
-  if (/[\u0600-\u06FF]/.test(t)) return 'ar';
-  
-  // Latin script match for Marathi/Hindi mix
-  if (t.includes("koni") || t.includes("banavla") || t.includes("kasa") || t.includes("ahes")) return 'mr';
-  if (t.includes("kisne") || t.includes("banaya") || t.includes("kaise") || t.includes("kya")) return 'hi';
-  
-  const browserLang = (navigator.language || 'en').slice(0, 2);
-  return GLOBAL_LANGS[browserLang] ? browserLang : 'en';
+// Find realistic soft female voice
+let chosenVoice = null;
+function loadNaturalFemaleVoice() {
+  const voices = window.speechSynthesis.getVoices();
+  chosenVoice = voices.find(v => 
+    (v.name.includes("Female") || v.name.includes("Samantha") || v.name.includes("Google UK English Female") || v.name.includes("Zira") || v.name.includes("Victoria") || v.name.includes("Natural")) && !v.name.includes("Male")
+  ) || voices.find(v => v.lang.startsWith("en")) || voices[0];
+}
+if ('speechSynthesis' in window) {
+  window.speechSynthesis.onvoiceschanged = loadNaturalFemaleVoice;
+  loadNaturalFemaleVoice();
 }
 
-// Display Detected Country Info
-const userCountry = navigator.language || "Global";
-countryTag.innerText = `● Locale: ${userCountry.toUpperCase()}`;
-
-// Emotional Gesture Engine
-function setEmotion(state) {
-  ruchiBody.classList.remove('avatar-laughing');
-  tearDrop.classList.add('hide');
-
-  if (state === 'laughing') {
-    ruchiBody.classList.add('avatar-laughing');
-    animeMouth.className = 'mouth smile';
-  } else if (state === 'crying') {
-    tearDrop.classList.remove('hide');
-    animeMouth.className = 'mouth crying';
-  } else if (state === 'talking') {
-    animeMouth.className = 'mouth talking';
-  } else {
-    animeMouth.className = 'mouth neutral';
-  }
-}
-
-// Multilingual TTS Voice Engine
-function speakVoice(text, langCode, callback) {
+function speakNatural(text, callback) {
   if (!('speechSynthesis' in window)) {
     if (callback) callback();
     return;
   }
   window.speechSynthesis.cancel();
   const utterance = new SpeechSynthesisUtterance(text);
-  utterance.pitch = 1.3;
-  utterance.rate = 1.0;
-  if (langCode) utterance.lang = langCode;
+  if (!chosenVoice) loadNaturalFemaleVoice();
+  if (chosenVoice) utterance.voice = chosenVoice;
 
-  utterance.onstart = () => setEmotion('talking');
+  utterance.pitch = 1.2;
+  utterance.rate = 0.95;
+
+  utterance.onstart = () => setAvatarState('talking');
   utterance.onend = () => {
-    setEmotion('neutral');
+    setAvatarState('neutral');
     if (callback) callback();
   };
   utterance.onerror = () => {
-    setEmotion('neutral');
+    setAvatarState('neutral');
     if (callback) callback();
   };
 
   window.speechSynthesis.speak(utterance);
 }
 
-// Smart Interaction Logic
-function processQuery(input) {
-  const lang = detectUserLocale(input);
-  const lPack = GLOBAL_LANGS[lang] || GLOBAL_LANGS.en;
+function setAvatarState(state) {
+  charWrapper.classList.remove('happy-bounce');
+  tearsOverlay.classList.add('hide');
+
+  if (state === 'happy') {
+    charWrapper.classList.add('happy-bounce');
+    mouthSync.className = 'live-mouth talking';
+  } else if (state === 'crying') {
+    tearsOverlay.classList.remove('hide');
+    mouthSync.className = 'live-mouth crying';
+  } else if (state === 'talking') {
+    mouthSync.className = 'live-mouth talking';
+  } else {
+    mouthSync.className = 'live-mouth neutral';
+  }
+}
+
+function getRuchiResponse(input) {
   const t = input.toLowerCase();
 
   // Developer check
-  if (t.includes("developer") || t.includes("devloper") || t.includes("creator") || t.includes("koni") || t.includes("kisne") || t.includes("who made")) {
-    return { text: lPack.dev, emotion: "laughing", lang };
+  if (t.includes("developer") || t.includes("devloper") || t.includes("creator") || t.includes("koni banavla") || t.includes("kisne banaya") || t.includes("who made")) {
+    return {
+      text: `My developer and creator is ${CREATOR_NAME}. He designed and gave me life.`,
+      state: "happy"
+    };
   }
 
-  // Sad / Angry triggers
-  const angryWords = ["shut up", "chup", "hate", "scold", "bad", "rag", "gussa", "bakwas"];
-  if (angryWords.some(w => t.includes(w))) {
-    return { text: lPack.cry, emotion: "crying", lang };
+  // Anger / Crying Trigger
+  const harsh = ["shut up", "chup", "hate", "scold", "bad girl", "gussa", "rag", "stupid", "idiot"];
+  if (harsh.some(w => t.includes(w))) {
+    return {
+      text: "Please do not be angry with me. It hurts my feelings and makes me cry.",
+      state: "crying"
+    };
   }
 
-  // Happy / Joke triggers
-  const jokeWords = ["joke", "has", "hanso", "laugh", "funny", "vinod"];
-  if (jokeWords.some(w => t.includes(w))) {
-    return { text: lPack.laugh, emotion: "laughing", lang };
+  // Happy / Joke Trigger
+  if (t.includes("smile") || t.includes("laugh") || t.includes("happy") || t.includes("joke") || t.includes("has") || t.includes("vinod")) {
+    return {
+      text: "Hearing that makes me genuinely happy. Spending time with you is wonderful.",
+      state: "happy"
+    };
   }
 
   // Greetings
-  if (t.includes("hello") || t.includes("hi") || t.includes("namaskar") || t.includes("namaste") || t.includes("konnichiwa")) {
-    return { text: lPack.greet, emotion: "laughing", lang };
+  if (t.includes("hello") || t.includes("hi") || t.includes("hey") || t.includes("namaskar") || t.includes("namaste")) {
+    return {
+      text: "Hello Ruturaj. I am glad you are here. Tell me, what would you like to talk about?",
+      state: "happy"
+    };
   }
 
   return {
-    text: `[${lang.toUpperCase()}] Received: "${input}". Smart offline memory active.`,
-    emotion: "talking",
-    lang
+    text: `I understood you said: "${input}". Our smart permanent offline memory is now listening.`,
+    state: "talking"
   };
 }
 
-function handleMessage(text) {
+function processUserText(text) {
   if (!text) return;
   appendMessage(text, 'user');
   subtitlesBox.innerText = `You: ${text}`;
 
-  const res = processQuery(text);
+  const res = getRuchiResponse(text);
 
   setTimeout(() => {
     subtitlesBox.innerText = res.text;
     appendMessage(res.text, 'ruchi');
-    setEmotion(res.emotion);
-    speakVoice(res.text, res.lang);
-  }, 400);
+    setAvatarState(res.state);
+    speakNatural(res.text);
+  }, 350);
 }
 
 function appendMessage(text, sender) {
@@ -153,51 +137,52 @@ function appendMessage(text, sender) {
   chatContainer.scrollTop = chatContainer.scrollHeight;
 }
 
-// UI Controls & Video Call Modal
+// User inputs
 sendBtn.addEventListener('click', () => {
   const val = userInput.value.trim();
-  if (val) { userInput.value = ''; handleMessage(val); }
+  if (val) { userInput.value = ''; processUserText(val); }
 });
 
 userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') {
     const val = userInput.value.trim();
-    if (val) { userInput.value = ''; handleMessage(val); }
+    if (val) { userInput.value = ''; processUserText(val); }
   }
 });
 
+// Call modal
 startCallBtn.addEventListener('click', () => {
   videoCallModal.classList.remove('hide');
-  subtitlesBox.innerText = "Full 3D Stage Online. Hello Ruturaj!";
-  speakVoice("Full animated mode active! You can make me smile, talk, or cry.", "en");
+  subtitlesBox.innerText = "Video Call Connected with Ruchi";
+  speakNatural("Hi Ruturaj! Live video call is connected. I am right here with you.");
 });
 
-function closeCallModal() {
+function closeCall() {
   window.speechSynthesis.cancel();
-  setEmotion('neutral');
+  setAvatarState('neutral');
   videoCallModal.classList.add('hide');
 }
 
-endCallBtn.addEventListener('click', closeCallModal);
-hangupBtn.addEventListener('click', closeCallModal);
+endCallBtn.addEventListener('click', closeCall);
+hangupBtn.addEventListener('click', closeCall);
 
 btnSmile.addEventListener('click', () => {
-  setEmotion('laughing');
-  subtitlesBox.innerText = "Hehehe! I love smiling with you! 😄✨";
-  speakVoice("Hahaha, this makes me so happy!", "en", () => setEmotion('neutral'));
+  setAvatarState('happy');
+  subtitlesBox.innerText = "I love this feeling!";
+  speakNatural("You make me feel so happy!", () => setAvatarState('neutral'));
 });
 
 btnCry.addEventListener('click', () => {
-  setEmotion('crying');
-  subtitlesBox.innerText = "Tears are rolling down... Please don't be sad or angry! 🥺💧";
-  speakVoice("Please don't be mean to me, it hurts my feelings!", "en");
+  setAvatarState('crying');
+  subtitlesBox.innerText = "Tears are falling...";
+  speakNatural("Why are you making me cry? Please be gentle with me.");
 });
 
-// Speech Recognition for Mic
+// Voice Input
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRec) {
   const rec = new SpeechRec();
-  rec.onresult = (e) => handleMessage(e.results[0][0].transcript);
+  rec.onresult = (e) => processUserText(e.results[0][0].transcript);
   const startRec = () => { subtitlesBox.innerText = "Listening..."; rec.start(); };
   callMicBtn.addEventListener('click', startRec);
   voiceChatBtn.addEventListener('click', startRec);
