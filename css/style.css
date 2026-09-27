@@ -1,122 +1,62 @@
 :root {
-  --bg-dark: #080a0f;
-  --panel-bg: #141822;
-  --hair-pink: #ff529a;
-  --hair-blue: #00c8ff;
-  --skin-glow: #ffe3d8;
-  --lips-pink: #e83a73;
-  --glass-border: rgba(255, 255, 255, 0.15);
-  --text-main: #f0f6fc;
+  --bg-primary: #0a0714;
+  --panel-bg: #140f26;
+  --border-color: rgba(147, 85, 255, 0.25);
+  --purple-accent: #8b5cf6;
+  --pink-accent: #ec4899;
+  --text-main: #f3f4f6;
+  --text-muted: #9ca3af;
+  --green-online: #10b981;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
+html, body { height: 100%; background: var(--bg-primary); color: var(--text-main); overflow: hidden; }
 
-.app-container { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; }
-.app-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
-.brand { display: flex; align-items: center; gap: 10px; }
-.avatar-mini-circle { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
-.brand h2 { font-size: 1.1rem; background: linear-gradient(90deg, var(--hair-pink), var(--hair-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-.status-indicator { font-size: 0.72rem; color: #3fb950; }
-.call-action-btn { background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); border: none; border-radius: 20px; padding: 7px 16px; font-weight: 600; color: #fff; cursor: pointer; }
+.app-layout { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; background: radial-gradient(circle at top, #1c1338, #0a0714); }
 
-/* Chat */
-.chat-container { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
-.msg { max-width: 82%; padding: 10px 14px; border-radius: 16px; font-size: 0.92rem; line-height: 1.45; }
-.ruchi-msg { align-self: flex-start; background: rgba(255,255,255,0.08); border-bottom-left-radius: 3px; }
-.user-msg { align-self: flex-end; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); color: #fff; border-bottom-right-radius: 3px; }
+.app-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border-color); }
+.brand h2 { font-size: 1.25rem; font-weight: 700; color: #c084fc; letter-spacing: 0.5px; }
+.sub-text { font-size: 0.75rem; color: var(--text-muted); display: block; }
+.status-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; font-weight: 600; color: var(--green-online); background: rgba(16, 185, 129, 0.12); padding: 4px 10px; border-radius: 12px; border: 1px solid rgba(16, 185, 129, 0.3); }
+.status-badge .dot { width: 7px; height: 7px; background: var(--green-online); border-radius: 50%; box-shadow: 0 0 6px var(--green-online); }
 
-/* Input Bar */
-.input-container { padding: 10px 14px; display: flex; align-items: center; gap: 8px; background: var(--panel-bg); border-top: 1px solid var(--glass-border); flex-shrink: 0; }
-.input-container input { flex: 1; background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 20px; padding: 10px 14px; color: #fff; outline: none; font-size: 0.95rem; }
-.voice-btn, .send-btn { border-radius: 50%; width: 42px; height: 42px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-.voice-btn { background: rgba(255,255,255,0.1); font-size: 1.1rem; }
-.send-btn { background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); color: #fff; font-size: 1rem; }
+.avatar-display-section { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 10px; position: relative; }
+.character-card { position: relative; width: 100%; max-width: 320px; display: flex; flex-direction: column; align-items: center; }
+.image-wrapper { width: 100%; max-height: 48vh; border-radius: 20px; overflow: hidden; border: 1px solid var(--border-color); box-shadow: 0 0 25px rgba(139, 92, 246, 0.25); background: #000; position: relative; }
+.image-wrapper img { width: 100%; height: 100%; object-fit: contain; display: block; }
 
-/* Video Call Stage */
-.video-call-modal { position: fixed; inset: 0; background: radial-gradient(circle at center, #261633, #06070a); z-index: 1000; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; }
-.hide { display: none !important; }
-.call-overlay-header { display: flex; justify-content: space-between; align-items: center; }
-.call-pulse { font-size: 0.75rem; color: #3fb950; }
-.end-call-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; }
+.mouth-sync-layer { position: absolute; width: 16px; height: 6px; background: rgba(225, 29, 72, 0.8); border-radius: 50%; bottom: 28%; left: 50%; transform: translateX(-50%); opacity: 0; transition: transform 0.08s; pointer-events: none; }
+.mouth-sync-layer.active { opacity: 0.9; animation: lipSyncPulse 0.18s infinite alternate; }
 
-/* Live Character Stage */
-.anime-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-.char-motion-box { width: 260px; height: 360px; position: relative; display: flex; flex-direction: column; align-items: center; animation: naturalBreathe 3.5s infinite ease-in-out; }
-
-/* Breathing & Head Sway */
-@keyframes naturalBreathe {
-  0%, 100% { transform: translateY(0) rotate(0deg); }
-  50% { transform: translateY(-7px) rotate(0.8deg); }
+@keyframes lipSyncPulse {
+  0% { transform: translateX(-50%) scaleY(0.4) scaleX(0.8); }
+  100% { transform: translateX(-50%) scaleY(1.6) scaleX(1.1); }
 }
 
-/* Hair Layer */
-.anime-hair-bg { position: absolute; width: 230px; height: 280px; top: 15px; background: linear-gradient(180deg, var(--hair-pink) 20%, var(--hair-blue) 90%); border-radius: 110px 110px 50px 50px; z-index: 1; box-shadow: 0 0 30px rgba(0, 200, 255, 0.3); }
-.anime-bangs { position: absolute; width: 150px; height: 60px; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); border-radius: 0 0 60px 60px; top: -6px; z-index: 5; }
+.speech-bubble { margin-top: 10px; background: rgba(20, 15, 38, 0.85); backdrop-filter: blur(8px); border: 1px solid var(--border-color); padding: 8px 16px; border-radius: 16px; font-size: 0.85rem; color: #e9d5ff; text-align: center; max-width: 90%; }
 
-/* Face */
-.anime-head { width: 140px; height: 160px; background: var(--skin-glow); border-radius: 46% 46% 52% 52%; position: relative; z-index: 3; box-shadow: 0 8px 25px rgba(0,0,0,0.4); border: 2px solid #ecc2b3; display: flex; justify-content: center; }
+.expressions-panel { padding: 6px 14px; }
+.expressions-panel h3 { font-size: 0.72rem; letter-spacing: 1px; color: var(--purple-accent); margin-bottom: 6px; }
+.exp-buttons-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.exp-btn { background: rgba(139, 92, 246, 0.1); border: 1px solid var(--border-color); color: #d8b4fe; padding: 6px 0; border-radius: 8px; font-size: 0.75rem; font-weight: 500; cursor: pointer; transition: background 0.2s; }
+.exp-btn:active { background: var(--purple-accent); color: #fff; }
 
-/* Eye Blinking Physics */
-.eyes-wrap { position: absolute; top: 62px; width: 100%; display: flex; justify-content: space-around; padding: 0 16px; }
-.eye { width: 26px; height: 34px; background: #fff; border-radius: 50%; position: relative; overflow: hidden; border-top: 3px solid #222; animation: realBlink 3.8s infinite; }
-.pupil { width: 18px; height: 24px; background: radial-gradient(circle, #00d2ff 20%, #104fa8 85%); border-radius: 50%; margin: 4px auto 0; }
-.eye-reflection { position: absolute; top: 5px; left: 5px; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
+.footer-control-panel { padding: 10px 14px; background: var(--panel-bg); border-top: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 8px; }
+.voice-status { display: flex; justify-content: space-between; align-items: center; font-size: 0.72rem; color: var(--text-muted); }
+.wave-bars { display: flex; gap: 3px; align-items: flex-end; height: 12px; }
+.wave-bars span { width: 3px; height: 4px; background: var(--purple-accent); border-radius: 2px; }
+.wave-bars.active span { animation: waveAnim 0.4s infinite ease-in-out alternate; }
+.wave-bars.active span:nth-child(2) { animation-delay: 0.1s; }
+.wave-bars.active span:nth-child(3) { animation-delay: 0.2s; }
+.wave-bars.active span:nth-child(4) { animation-delay: 0.3s; }
 
-@keyframes realBlink {
-  0%, 94%, 100% { transform: scaleY(1); }
-  97% { transform: scaleY(0.08); }
+@keyframes waveAnim {
+  0% { height: 4px; }
+  100% { height: 12px; background: var(--pink-accent); }
 }
 
-/* Cheeks */
-.cheeks { width: 20px; height: 10px; background: rgba(255, 82, 154, 0.45); border-radius: 50%; position: absolute; top: 98px; filter: blur(2px); }
-.c-left { left: 16px; }
-.c-right { right: 16px; }
-
-/* Dynamic Lip-Sync Mouth */
-.dynamic-lips { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--lips-pink); border-radius: 50%; transition: all 0.08s ease; display: flex; align-items: center; justify-content: center; }
-.dynamic-lips.neutral { width: 14px; height: 5px; border-radius: 0 0 14px 14px; }
-.dynamic-lips.talking { animation: realLipSync 0.18s infinite alternate !important; }
-.dynamic-lips.smile { width: 24px; height: 12px; border-radius: 0 0 20px 20px; background: #ff4785; }
-.dynamic-lips.crying { width: 20px; height: 12px; border-radius: 14px 14px 0 0; background: #7c243b; }
-
-@keyframes realLipSync {
-  0% { width: 14px; height: 4px; border-radius: 4px; }
-  50% { width: 20px; height: 14px; border-radius: 50%; }
-  100% { width: 16px; height: 18px; border-radius: 45%; }
-}
-
-/* Falling Tears */
-.tears-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
-.tear { position: absolute; width: 6px; height: 14px; background: #00d2ff; border-radius: 50%; box-shadow: 0 0 8px #00d2ff; animation: liveTearFall 1s infinite ease-in; }
-.tear-l { top: 90px; left: 32px; }
-.tear-r { top: 90px; right: 32px; animation-delay: 0.3s; }
-
-@keyframes liveTearFall {
-  0% { transform: translateY(0); opacity: 0; }
-  30% { opacity: 1; }
-  100% { transform: translateY(50px); opacity: 0; }
-}
-
-/* Torso & Bust */
-.anime-neck { width: 20px; height: 16px; background: var(--skin-glow); z-index: 2; margin-top: -6px; }
-.anime-torso { width: 95px; height: 95px; background: #1a1b2b; border-radius: 24px 24px 10px 10px; z-index: 2; display: flex; flex-direction: column; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
-.anime-bust { display: flex; gap: 6px; margin-top: 10px; }
-.bust-c { width: 38px; height: 32px; background: linear-gradient(180deg, #282a40, #161724); border-radius: 50%; }
-
-/* Laugh Motion */
-.char-laugh { animation: laughShake 0.22s infinite alternate !important; }
-@keyframes laughShake {
-  0% { transform: translateY(0) rotate(0deg); }
-  100% { transform: translateY(-9px) rotate(1.2deg); }
-}
-
-.subtitles-box { margin-top: 12px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; color: #70d6ff; text-align: center; max-width: 88%; border: 1px solid var(--glass-border); }
-
-/* Controls */
-.call-controls { display: flex; justify-content: center; gap: 16px; padding-bottom: 20px; }
-.ctrl-btn { min-width: 58px; height: 50px; border-radius: 25px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); color: #fff; padding: 0 14px; }
-.mic { font-size: 1.2rem; }
-.smile { background: #3d264f; color: #ff9ed2; }
-.sad { background: #451d2c; color: #70d6ff; }
-.end { background: #eb3b5a; color: #fff; }
+.input-row { display: flex; gap: 8px; align-items: center; }
+.input-row input { flex: 1; background: #0a0714; border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; font-size: 0.9rem; }
+.action-btn { width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+.mic-btn { background: rgba(139, 92, 246, 0.15); border: 1px solid var(--border-color); font-size: 1.1rem; }
+.send-btn { background: linear-gradient(135deg, var(--purple-accent), var(--pink-accent)); color: #fff; font-size: 1rem; }
