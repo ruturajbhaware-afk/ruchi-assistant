@@ -3,20 +3,17 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - Virtual Companion</title>
-  <link rel="stylesheet" href="css/style.css?v=5">
+  <title>Ruchi AI - Live Virtual Companion</title>
+  <link rel="stylesheet" href="css/style.css?v=6">
 </head>
 <body>
   <div class="app-container">
-    <!-- Header -->
     <header class="app-header">
       <div class="brand">
-        <div class="header-avatar-thumb">
-          <img src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=150&auto=format&fit=crop&q=80" alt="Ruchi Thumb">
-        </div>
+        <div class="avatar-mini-circle">🌸</div>
         <div>
           <h2>Ruchi AI</h2>
-          <span id="countryTag" class="status-indicator">● Active</span>
+          <span class="status-indicator">● Active (Natural Engine)</span>
         </div>
       </div>
       <div class="header-actions">
@@ -24,60 +21,86 @@
       </div>
     </header>
 
-    <!-- Chat Messages Screen -->
     <main class="chat-container" id="chatContainer">
       <div class="msg ruchi-msg">
-        Hello Ruturaj. I am Ruchi, your personal AI companion. Tap Live Video Call above to talk with me face-to-face.
+        Hello Ruturaj! Tap Live Video Call above to see my eyes blink, lips move, and real-time expressions.
       </div>
     </main>
 
-    <!-- Bottom Input -->
     <footer class="input-container">
-      <button id="voiceChatBtn" class="voice-btn" title="Speak to Ruchi">🎙️</button>
-      <input type="text" id="userInput" placeholder="Say something to Ruchi..." autocomplete="off">
+      <button id="voiceChatBtn" class="voice-btn" title="Voice Input">🎙️</button>
+      <input type="text" id="userInput" placeholder="Speak or type to Ruchi..." autocomplete="off">
       <button id="sendBtn" class="send-btn">➤</button>
     </footer>
   </div>
 
-  <!-- Fullscreen Realistic Anime Video Call Modal -->
+  <!-- Fullscreen Live Interactive Video Call Screen -->
   <div id="videoCallModal" class="video-call-modal hide">
     <div class="call-overlay-header">
       <div class="call-user-info">
-        <h3>Ruchi (Live Presence)</h3>
-        <span id="callStatus" class="call-pulse">Connected • Natural Voice Engine</span>
+        <h3>Ruchi (Live Dynamic)</h3>
+        <span class="call-pulse">Live Motion Engine Active</span>
       </div>
       <button id="endCallBtn" class="end-call-btn">✕</button>
     </div>
 
-    <!-- 3D Photo/Visual Stage -->
+    <!-- Live Animated Character Viewport -->
     <div class="anime-stage">
-      <div class="character-card-wrapper" id="charWrapper">
-        <div class="anime-portrait-frame">
-          <img id="ruchiPhoto" class="ruchi-photo" src="https://images.unsplash.com/photo-1578632767115-351597cf2477?w=600&auto=format&fit=crop&q=85" alt="Ruchi AI">
-          
-          <!-- Realistic Glowing Emotion Aura -->
-          <div class="avatar-glow-overlay"></div>
+      <div class="char-motion-box" id="charBody">
+        <!-- Hair Ambient Layer -->
+        <div class="anime-hair-bg"></div>
 
-          <!-- Realistic Tears Overlay -->
-          <div id="tearsOverlay" class="tears-container hide">
-            <span class="tear tear-1"></span>
-            <span class="tear tear-2"></span>
+        <!-- Head & Face -->
+        <div class="anime-head">
+          <div class="anime-bangs"></div>
+
+          <!-- Dynamic Blinking Eyes -->
+          <div class="eyes-wrap">
+            <div class="eye left-eye">
+              <div class="pupil"></div>
+              <div class="eye-reflection"></div>
+            </div>
+            <div class="eye right-eye">
+              <div class="pupil"></div>
+              <div class="eye-reflection"></div>
+            </div>
           </div>
 
-          <!-- Lip-Sync Realistic Mouth Overlay -->
-          <div id="mouthSync" class="live-mouth neutral"></div>
+          <!-- Realistic Tears Flow -->
+          <div id="tearsWrap" class="tears-layer hide">
+            <div class="tear tear-l"></div>
+            <div class="tear tear-r"></div>
+          </div>
+
+          <!-- Blush -->
+          <div class="cheeks c-left"></div>
+          <div class="cheeks c-right"></div>
+
+          <!-- Dynamic Moving Lips (Lip-Sync Engine) -->
+          <div id="animeLips" class="dynamic-lips neutral">
+            <div class="inner-mouth"></div>
+          </div>
+        </div>
+
+        <!-- Upper Torso & Silhouette -->
+        <div class="anime-neck"></div>
+        <div class="anime-torso">
+          <div class="anime-bust">
+            <div class="bust-c left"></div>
+            <div class="bust-c right"></div>
+          </div>
         </div>
       </div>
 
-      <div id="subtitlesBox" class="subtitles-box">I'm right here with you...</div>
+      <div id="subtitlesBox" class="subtitles-box">Connecting live feed...</div>
     </div>
 
-    <!-- Video Call Controls -->
+    <!-- Call Controls -->
     <div class="call-controls">
-      <button id="btnSmile" class="control-circle-btn smile-btn" title="Make Her Happy">Happy</button>
-      <button id="callMicBtn" class="control-circle-btn mic-btn" title="Voice Talk">🎙️</button>
-      <button id="btnCry" class="control-circle-btn cry-btn" title="Tears Emotion">Sad</button>
-      <button id="hangupBtn" class="control-circle-btn hangup-btn" title="End">End</button>
+      <button id="btnSmile" class="ctrl-btn smile">Happy</button>
+      <button id="callMicBtn" class="ctrl-btn mic">🎙️</button>
+      <button id="btnCry" class="ctrl-btn sad">Sad</button>
+      <button id="hangupBtn" class="ctrl-btn end">End</button>
     </div>
   </div>
 

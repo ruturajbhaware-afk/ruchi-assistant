@@ -1,93 +1,122 @@
 :root {
-  --bg-dark: #0a0c10;
-  --panel-bg: rgba(22, 27, 34, 0.85);
-  --primary-pink: #ff65a3;
-  --primary-blue: #00d2ff;
-  --glass-border: rgba(255, 255, 255, 0.14);
+  --bg-dark: #080a0f;
+  --panel-bg: #141822;
+  --hair-pink: #ff529a;
+  --hair-blue: #00c8ff;
+  --skin-glow: #ffe3d8;
+  --lips-pink: #e83a73;
+  --glass-border: rgba(255, 255, 255, 0.15);
   --text-main: #f0f6fc;
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
 html, body { height: 100%; background: var(--bg-dark); color: var(--text-main); overflow: hidden; }
 
-.app-container { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; position: relative; }
-
-/* Header */
-.app-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: #161b22; border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
+.app-container { display: flex; flex-direction: column; height: 100vh; height: 100dvh; max-width: 480px; margin: 0 auto; }
+.app-header { padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; background: var(--panel-bg); border-bottom: 1px solid var(--glass-border); flex-shrink: 0; }
 .brand { display: flex; align-items: center; gap: 10px; }
-.header-avatar-thumb { width: 38px; height: 38px; border-radius: 50%; overflow: hidden; border: 2px solid var(--primary-pink); }
-.header-avatar-thumb img { width: 100%; height: 100%; object-fit: cover; }
-.brand h2 { font-size: 1.05rem; background: linear-gradient(90deg, var(--primary-pink), var(--primary-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; font-weight: 700; }
+.avatar-mini-circle { width: 34px; height: 34px; border-radius: 50%; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; }
+.brand h2 { font-size: 1.1rem; background: linear-gradient(90deg, var(--hair-pink), var(--hair-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
 .status-indicator { font-size: 0.72rem; color: #3fb950; }
-.call-action-btn { background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue)); border: none; border-radius: 20px; padding: 7px 16px; font-weight: 600; color: #fff; cursor: pointer; box-shadow: 0 0 12px rgba(255, 101, 163, 0.4); }
+.call-action-btn { background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); border: none; border-radius: 20px; padding: 7px 16px; font-weight: 600; color: #fff; cursor: pointer; }
 
-/* Chat Container */
+/* Chat */
 .chat-container { flex: 1; overflow-y: auto; padding: 14px 16px; display: flex; flex-direction: column; gap: 12px; }
-.msg { max-width: 82%; padding: 10px 14px; border-radius: 16px; font-size: 0.92rem; line-height: 1.45; word-break: break-word; }
-.ruchi-msg { align-self: flex-start; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); border-bottom-left-radius: 3px; }
-.user-msg { align-self: flex-end; background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue)); color: #fff; border-bottom-right-radius: 3px; }
+.msg { max-width: 82%; padding: 10px 14px; border-radius: 16px; font-size: 0.92rem; line-height: 1.45; }
+.ruchi-msg { align-self: flex-start; background: rgba(255,255,255,0.08); border-bottom-left-radius: 3px; }
+.user-msg { align-self: flex-end; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); color: #fff; border-bottom-right-radius: 3px; }
 
-/* Bottom Bar */
-.input-container { padding: 10px 14px; display: flex; align-items: center; gap: 8px; background: #161b22; border-top: 1px solid var(--glass-border); flex-shrink: 0; }
+/* Input Bar */
+.input-container { padding: 10px 14px; display: flex; align-items: center; gap: 8px; background: var(--panel-bg); border-top: 1px solid var(--glass-border); flex-shrink: 0; }
 .input-container input { flex: 1; background: var(--bg-dark); border: 1px solid var(--glass-border); border-radius: 20px; padding: 10px 14px; color: #fff; outline: none; font-size: 0.95rem; }
 .voice-btn, .send-btn { border-radius: 50%; width: 42px; height: 42px; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 .voice-btn { background: rgba(255,255,255,0.1); font-size: 1.1rem; }
-.send-btn { background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue)); color: #fff; font-size: 1rem; }
+.send-btn { background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); color: #fff; font-size: 1rem; }
 
-/* Video Call Fullscreen */
-.video-call-modal { position: fixed; inset: 0; background: radial-gradient(circle at center, #1e142b, #050608); z-index: 1000; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; }
+/* Video Call Stage */
+.video-call-modal { position: fixed; inset: 0; background: radial-gradient(circle at center, #261633, #06070a); z-index: 1000; display: flex; flex-direction: column; justify-content: space-between; padding: 16px; }
 .hide { display: none !important; }
 .call-overlay-header { display: flex; justify-content: space-between; align-items: center; }
 .call-pulse { font-size: 0.75rem; color: #3fb950; }
-.end-call-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; font-size: 1.1rem; cursor: pointer; }
+.end-call-btn { background: rgba(255,255,255,0.15); border: none; color: #fff; width: 36px; height: 36px; border-radius: 50%; cursor: pointer; font-size: 1.1rem; }
 
-/* Realistic Anime Stage */
+/* Live Character Stage */
 .anime-stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; }
-.character-card-wrapper { width: 280px; height: 390px; border-radius: 24px; padding: 4px; background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue)); box-shadow: 0 10px 40px rgba(255, 101, 163, 0.35); transition: transform 0.3s ease; animation: breathingAura 4s infinite ease-in-out; }
-.anime-portrait-frame { width: 100%; height: 100%; border-radius: 20px; overflow: hidden; position: relative; background: #000; }
-.ruchi-photo { width: 100%; height: 100%; object-fit: cover; filter: brightness(1.02) contrast(1.05); }
+.char-motion-box { width: 260px; height: 360px; position: relative; display: flex; flex-direction: column; align-items: center; animation: naturalBreathe 3.5s infinite ease-in-out; }
 
-/* Realistic Lip Movement Overlay */
-.live-mouth { position: absolute; bottom: 33%; left: 49%; transform: translateX(-50%); background: rgba(214, 69, 108, 0.85); border-radius: 50%; transition: all 0.08s ease; opacity: 0; }
-.live-mouth.neutral { width: 12px; height: 3px; opacity: 0.2; }
-.live-mouth.talking { opacity: 0.85; animation: mouthSpeech 0.22s infinite alternate; }
-.live-mouth.crying { opacity: 0.9; width: 18px; height: 8px; border-radius: 10px 10px 0 0; background: #822b40; }
-
-@keyframes mouthSpeech {
-  0% { width: 10px; height: 3px; }
-  100% { width: 18px; height: 12px; }
+/* Breathing & Head Sway */
+@keyframes naturalBreathe {
+  0%, 100% { transform: translateY(0) rotate(0deg); }
+  50% { transform: translateY(-7px) rotate(0.8deg); }
 }
 
-/* Tears Physics */
-.tears-container { position: absolute; inset: 0; pointer-events: none; }
-.tear { position: absolute; width: 5px; height: 14px; background: linear-gradient(180deg, #70d6ff, #fff); border-radius: 50%; filter: drop-shadow(0 0 4px #00d2ff); animation: tearDropFall 1.2s infinite ease-in; }
-.tear-1 { top: 46%; left: 41%; }
-.tear-2 { top: 47%; right: 41%; animation-delay: 0.4s; }
+/* Hair Layer */
+.anime-hair-bg { position: absolute; width: 230px; height: 280px; top: 15px; background: linear-gradient(180deg, var(--hair-pink) 20%, var(--hair-blue) 90%); border-radius: 110px 110px 50px 50px; z-index: 1; box-shadow: 0 0 30px rgba(0, 200, 255, 0.3); }
+.anime-bangs { position: absolute; width: 150px; height: 60px; background: linear-gradient(135deg, var(--hair-pink), var(--hair-blue)); border-radius: 0 0 60px 60px; top: -6px; z-index: 5; }
 
-@keyframes tearDropFall {
+/* Face */
+.anime-head { width: 140px; height: 160px; background: var(--skin-glow); border-radius: 46% 46% 52% 52%; position: relative; z-index: 3; box-shadow: 0 8px 25px rgba(0,0,0,0.4); border: 2px solid #ecc2b3; display: flex; justify-content: center; }
+
+/* Eye Blinking Physics */
+.eyes-wrap { position: absolute; top: 62px; width: 100%; display: flex; justify-content: space-around; padding: 0 16px; }
+.eye { width: 26px; height: 34px; background: #fff; border-radius: 50%; position: relative; overflow: hidden; border-top: 3px solid #222; animation: realBlink 3.8s infinite; }
+.pupil { width: 18px; height: 24px; background: radial-gradient(circle, #00d2ff 20%, #104fa8 85%); border-radius: 50%; margin: 4px auto 0; }
+.eye-reflection { position: absolute; top: 5px; left: 5px; width: 6px; height: 6px; background: #fff; border-radius: 50%; }
+
+@keyframes realBlink {
+  0%, 94%, 100% { transform: scaleY(1); }
+  97% { transform: scaleY(0.08); }
+}
+
+/* Cheeks */
+.cheeks { width: 20px; height: 10px; background: rgba(255, 82, 154, 0.45); border-radius: 50%; position: absolute; top: 98px; filter: blur(2px); }
+.c-left { left: 16px; }
+.c-right { right: 16px; }
+
+/* Dynamic Lip-Sync Mouth */
+.dynamic-lips { position: absolute; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--lips-pink); border-radius: 50%; transition: all 0.08s ease; display: flex; align-items: center; justify-content: center; }
+.dynamic-lips.neutral { width: 14px; height: 5px; border-radius: 0 0 14px 14px; }
+.dynamic-lips.talking { animation: realLipSync 0.18s infinite alternate !important; }
+.dynamic-lips.smile { width: 24px; height: 12px; border-radius: 0 0 20px 20px; background: #ff4785; }
+.dynamic-lips.crying { width: 20px; height: 12px; border-radius: 14px 14px 0 0; background: #7c243b; }
+
+@keyframes realLipSync {
+  0% { width: 14px; height: 4px; border-radius: 4px; }
+  50% { width: 20px; height: 14px; border-radius: 50%; }
+  100% { width: 16px; height: 18px; border-radius: 45%; }
+}
+
+/* Falling Tears */
+.tears-layer { position: absolute; inset: 0; pointer-events: none; z-index: 6; }
+.tear { position: absolute; width: 6px; height: 14px; background: #00d2ff; border-radius: 50%; box-shadow: 0 0 8px #00d2ff; animation: liveTearFall 1s infinite ease-in; }
+.tear-l { top: 90px; left: 32px; }
+.tear-r { top: 90px; right: 32px; animation-delay: 0.3s; }
+
+@keyframes liveTearFall {
   0% { transform: translateY(0); opacity: 0; }
-  25% { opacity: 1; }
-  100% { transform: translateY(70px); opacity: 0; }
+  30% { opacity: 1; }
+  100% { transform: translateY(50px); opacity: 0; }
 }
 
-@keyframes breathingAura {
-  0%, 100% { transform: scale(1); box-shadow: 0 10px 30px rgba(255, 101, 163, 0.3); }
-  50% { transform: scale(1.02); box-shadow: 0 12px 45px rgba(0, 210, 255, 0.45); }
+/* Torso & Bust */
+.anime-neck { width: 20px; height: 16px; background: var(--skin-glow); z-index: 2; margin-top: -6px; }
+.anime-torso { width: 95px; height: 95px; background: #1a1b2b; border-radius: 24px 24px 10px 10px; z-index: 2; display: flex; flex-direction: column; align-items: center; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.anime-bust { display: flex; gap: 6px; margin-top: 10px; }
+.bust-c { width: 38px; height: 32px; background: linear-gradient(180deg, #282a40, #161724); border-radius: 50%; }
+
+/* Laugh Motion */
+.char-laugh { animation: laughShake 0.22s infinite alternate !important; }
+@keyframes laughShake {
+  0% { transform: translateY(0) rotate(0deg); }
+  100% { transform: translateY(-9px) rotate(1.2deg); }
 }
 
-/* Dynamic Happy / Laugh */
-.happy-bounce { animation: laughBounce 0.3s infinite alternate !important; }
-@keyframes laughBounce {
-  0% { transform: translateY(0) scale(1.02); }
-  100% { transform: translateY(-8px) scale(1.03); }
-}
-
-.subtitles-box { margin-top: 14px; background: rgba(0, 0, 0, 0.7); backdrop-filter: blur(8px); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; color: #ffb5d5; text-align: center; max-width: 85%; border: 1px solid var(--glass-border); }
+.subtitles-box { margin-top: 12px; background: rgba(0,0,0,0.7); backdrop-filter: blur(8px); padding: 8px 18px; border-radius: 20px; font-size: 0.9rem; color: #70d6ff; text-align: center; max-width: 88%; border: 1px solid var(--glass-border); }
 
 /* Controls */
 .call-controls { display: flex; justify-content: center; gap: 16px; padding-bottom: 20px; }
-.control-circle-btn { min-width: 58px; height: 50px; border-radius: 25px; border: none; font-size: 0.88rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); color: #fff; padding: 0 14px; }
-.mic-btn { font-size: 1.2rem; }
-.smile-btn { background: #3d264f; color: #ff9ed2; }
-.cry-btn { background: #451d2c; color: #70d6ff; }
-.hangup-btn { background: #eb3b5a; color: #fff; }
+.ctrl-btn { min-width: 58px; height: 50px; border-radius: 25px; border: none; font-size: 0.9rem; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.15); color: #fff; padding: 0 14px; }
+.mic { font-size: 1.2rem; }
+.smile { background: #3d264f; color: #ff9ed2; }
+.sad { background: #451d2c; color: #70d6ff; }
+.end { background: #eb3b5a; color: #fff; }
