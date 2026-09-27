@@ -1,0 +1,185 @@
+:root {
+  --bg-gradient: linear-gradient(135deg, #0d1117, #1a162b, #120e24);
+  --primary-pink: #ff75c3;
+  --primary-blue: #70a6ff;
+  --glass-bg: rgba(255, 255, 255, 0.07);
+  --glass-border: rgba(255, 255, 255, 0.12);
+  --text-main: #f0f6fc;
+  --text-muted: #8b949e;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+}
+
+body {
+  background: var(--bg-gradient);
+  color: var(--text-main);
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden;
+}
+
+.app-container {
+  width: 100%;
+  max-width: 480px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: rgba(13, 17, 23, 0.75);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--glass-border);
+}
+
+.app-header {
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.avatar-mini {
+  font-size: 22px;
+}
+
+.brand h2 {
+  font-size: 1.1rem;
+  background: linear-gradient(90deg, var(--primary-pink), var(--primary-blue));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.status-indicator {
+  font-size: 0.7rem;
+  color: #3fb950;
+  display: block;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+.ruchi-avatar-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 15px 0;
+}
+
+.glow-ring {
+  width: 85px;
+  height: 85px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue));
+  padding: 3px;
+  box-shadow: 0 0 20px rgba(255, 117, 195, 0.4);
+  animation: pulse 3s infinite ease-in-out;
+}
+
+.ruchi-avatar {
+  width: 100%;
+  height: 100%;
+  background: #161b22;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2.2rem;
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); box-shadow: 0 0 15px rgba(255, 117, 195, 0.3); }
+  50% { transform: scale(1.04); box-shadow: 0 0 25px rgba(112, 166, 255, 0.5); }
+}
+
+.status-text {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-top: 6px;
+}
+
+.chat-container {
+  flex: 1;
+  overflow-y: auto;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.msg {
+  max-width: 80%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 0.9rem;
+  line-height: 1.4;
+}
+
+.ruchi-msg {
+  align-self: flex-start;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-bottom-left-radius: 4px;
+}
+
+.user-msg {
+  align-self: flex-end;
+  background: linear-gradient(135deg, #e05299, #5688db);
+  color: #fff;
+  border-bottom-right-radius: 4px;
+}
+
+.input-container {
+  padding: 10px 14px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-top: 1px solid var(--glass-border);
+  background: rgba(13, 17, 23, 0.9);
+}
+
+.input-container input {
+  flex: 1;
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 20px;
+  padding: 10px 14px;
+  color: #fff;
+  outline: none;
+  font-size: 0.9rem;
+}
+
+.voice-btn, .send-btn {
+  background: var(--glass-bg);
+  border: 1px solid var(--glass-border);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  font-size: 1rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.send-btn {
+  background: linear-gradient(135deg, var(--primary-pink), var(--primary-blue));
+  border: none;
+  color: #fff;
+}
