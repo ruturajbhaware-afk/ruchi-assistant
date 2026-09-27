@@ -3,64 +3,47 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - 3D Autonomous Companion</title>
-  <link rel="stylesheet" href="css/style.css?v=9">
+  <title>Ruchi AI - Live 3D Companion</title>
+  <link rel="stylesheet" href="css/style.css?v=10">
 </head>
 <body>
   <div class="app-layout">
     
-    <!-- Top Header -->
     <header class="app-header">
       <div class="brand">
         <h2>Ruchi AI 💜</h2>
-        <span class="sub-text">Realistic 3D Companion</span>
+        <span class="sub-text">Live Interactive Anime Companion</span>
       </div>
       <div class="status-badge">
-        <span class="dot"></span> ONLINE
+        <span class="dot"></span> LIVE MOTION
       </div>
     </header>
 
-    <!-- Main Realistic Avatar Motion Stage -->
     <main class="avatar-stage">
-      <div class="avatar-breathing-frame" id="avatarBody">
-        
-        <!-- Cropped Focused Character Base -->
-        <div class="avatar-viewport">
-          <img id="mainAvatarImg" class="sheet-img" src="assets/ruchi_sheet.png" alt="Ruchi AI">
-          
-          <!-- Realistic Micro-Motion Overlays -->
-          <div class="hair-sway-overlay"></div>
-          <div id="eyeBlinkLayer" class="blink-layer"></div>
-          <div id="mouthSyncLayer" class="mouth-sync-layer"></div>
-        </div>
-
-        <!-- Emotion Glow Aura -->
-        <div id="emotionAura" class="emotion-aura"></div>
+      <div class="canvas-holder">
+        <canvas id="liveRuchiCanvas" width="360" height="460"></canvas>
       </div>
-
-      <!-- Dialogue Bubble -->
       <div class="speech-bubble" id="speechBubble">
-        Hey Ruturaj! I am listening to your feelings... 💜
+        Hey Ruturaj! Mala paha, maje dole blink hotayt, bolatana lips halat ahet! 💜
       </div>
     </main>
 
-    <!-- Bottom Audio/Text Controls -->
     <footer class="footer-control-panel">
       <div class="voice-status">
-        <span id="emotionStatusText">Feeling: Calm & Attentive</span>
+        <span id="emotionStatusText">Feeling: Active & Responsive</span>
         <div id="voiceWave" class="wave-bars">
           <span></span><span></span><span></span><span></span>
         </div>
       </div>
       <div class="input-row">
-        <button id="micBtn" class="action-btn mic-btn" title="Speak to Ruchi">🎙️</button>
-        <input type="text" id="userInput" placeholder="Speak or type how you feel..." autocomplete="off">
+        <button id="micBtn" class="action-btn mic-btn">🎙️</button>
+        <input type="text" id="userInput" placeholder="Type or speak something to Ruchi..." autocomplete="off">
         <button id="sendBtn" class="action-btn send-btn">➤</button>
       </div>
     </footer>
 
   </div>
 
-  <script src="js/app.js?v=9"></script>
+  <script src="js/app.js?v=10"></script>
 </body>
 </html>
