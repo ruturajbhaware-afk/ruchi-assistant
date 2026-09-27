@@ -3,107 +3,300 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI 💜</title>
+  <title>Ruchi AI - Cyber Mirror 🪞</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: sans-serif; }
-    body { background: #070510; color: #fff; height: 100vh; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; }
-    .header { padding: 12px 16px; background: #120d24; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid rgba(139,92,246,0.3); }
-    .header h2 { font-size: 1.15rem; color: #c084fc; font-weight: bold; }
-    .status { font-size: 0.75rem; color: #10b981; font-weight: bold; }
-    
-    .stage { flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 10px; }
-    .char-card { width: 300px; height: 420px; position: relative; border-radius: 24px; overflow: hidden; border: 1.5px solid rgba(139,92,246,0.4); box-shadow: 0 0 30px rgba(139,92,246,0.35); background: #000; animation: breatheMotion 3.5s infinite ease-in-out; }
-    .char-card img { width: 100%; height: 100%; object-fit: cover; }
-
-    /* Breathing & Hair Floating */
-    @keyframes breatheMotion {
-      0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-8px) scale(1.02); }
+    :root {
+      --primary-purple: #9d4edd;
+      --neon-pink: #ff007f;
+      --cyber-blue: #00f0ff;
+      --bg-space: #07040d;
+      --mirror-glass: rgba(255, 255, 255, 0.08);
     }
 
-    /* Real-time Lip sync & Eye blink overlays on top of the HD Photo */
-    .eye-blink-bar { position: absolute; top: 34%; left: 38%; width: 28%; height: 5px; background: rgba(20,10,30,0.85); border-radius: 4px; opacity: 0; pointer-events: none; transition: opacity 0.08s; }
-    .mouth-sync-bar { position: absolute; top: 41.5%; left: 47%; width: 18px; height: 6px; background: #e11d48; border-radius: 50%; opacity: 0; pointer-events: none; }
-    .mouth-sync-bar.talking { opacity: 0.9; animation: lipSyncWave 0.16s infinite alternate; }
-    @keyframes lipSyncWave { 0% { transform: scale(0.7, 0.4); } 100% { transform: scale(1.3, 2); } }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body { height: 100%; background: var(--bg-space); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
 
-    .bubble { margin-top: 12px; background: rgba(20,14,38,0.9); border: 1px solid rgba(139,92,246,0.3); padding: 10px 18px; border-radius: 18px; font-size: 0.88rem; color: #eedaff; text-align: center; max-width: 90%; }
-    
-    .footer { padding: 10px 16px; background: #120d24; border-top: 1px solid rgba(139,92,246,0.3); display: flex; gap: 8px; }
-    .footer input { flex: 1; background: #080512; border: 1px solid rgba(139,92,246,0.3); border-radius: 20px; padding: 10px 16px; color: #fff; outline: none; }
-    .footer button { border: none; border-radius: 50%; width: 44px; height: 44px; cursor: pointer; color: #fff; font-size: 1.1rem; }
-    .mic-btn { background: rgba(139,92,246,0.2); }
-    .send-btn { background: linear-gradient(135deg, #8b5cf6, #ec4899); }
+    /* Top Bar */
+    .header {
+      padding: 12px 18px;
+      background: rgba(18, 10, 32, 0.85);
+      backdrop-filter: blur(12px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(157, 78, 221, 0.25);
+      flex-shrink: 0;
+    }
+    .brand h1 { font-size: 1.25rem; font-weight: 800; background: linear-gradient(90deg, #e0aaff, var(--cyber-blue)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+    .brand span { font-size: 0.72rem; color: #a29bfe; display: block; }
+    .status-badge { display: flex; align-items: center; gap: 6px; font-size: 0.75rem; color: #00ffaa; background: rgba(0,255,170,0.1); border: 1px solid rgba(0,255,170,0.3); padding: 4px 10px; border-radius: 12px; }
+    .status-badge .dot { width: 6px; height: 6px; background: #00ffaa; border-radius: 50%; box-shadow: 0 0 8px #00ffaa; }
+
+    /* Mirror Viewport */
+    .viewport {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 10px 16px;
+      position: relative;
+    }
+
+    /* 🪞 The Magic Cyber Mirror Frame */
+    .cyber-mirror {
+      width: 290px;
+      height: 400px;
+      border-radius: 145px 145px 35px 35px;
+      padding: 6px;
+      background: linear-gradient(145deg, var(--neon-pink), var(--primary-purple), var(--cyber-blue));
+      box-shadow: 0 0 35px rgba(157, 78, 221, 0.45), inset 0 0 15px rgba(255,255,255,0.3);
+      position: relative;
+      animation: mirrorAura 4s infinite alternate ease-in-out;
+    }
+
+    @keyframes mirrorAura {
+      0% { box-shadow: 0 0 25px rgba(255, 0, 127, 0.4); }
+      100% { box-shadow: 0 0 45px rgba(0, 240, 255, 0.55); }
+    }
+
+    .mirror-inner {
+      width: 100%;
+      height: 100%;
+      border-radius: 140px 140px 30px 30px;
+      overflow: hidden;
+      background: #000;
+      position: relative;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    /* Focused Ruchi Avatar with Crop Engine */
+    .avatar-focus-crop {
+      width: 100%;
+      height: 100%;
+      position: relative;
+      animation: avatarBreath 3.6s infinite ease-in-out;
+      transform-origin: center 70%;
+    }
+
+    .avatar-focus-crop img {
+      width: 195%;
+      height: auto;
+      position: absolute;
+      top: -6%;
+      left: -2%;
+      object-fit: cover;
+      pointer-events: none;
+      filter: contrast(1.05) saturate(1.1);
+    }
+
+    @keyframes avatarBreath {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-7px) scale(1.02); }
+    }
+
+    /* Mirror Light Sheen & Reflections */
+    .mirror-sheen {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(135deg, rgba(255,255,255,0.25) 0%, transparent 45%, rgba(0,240,255,0.1) 100%);
+      pointer-events: none;
+    }
+
+    /* Subtitle Dialogue Bubble */
+    .dialogue-box {
+      margin-top: 14px;
+      background: rgba(18, 10, 32, 0.88);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(157, 78, 221, 0.35);
+      padding: 10px 18px;
+      border-radius: 20px;
+      font-size: 0.88rem;
+      line-height: 1.4;
+      color: #f1e4ff;
+      text-align: center;
+      max-width: 90%;
+      min-height: 44px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.5);
+    }
+
+    /* Input Dock */
+    .dock {
+      padding: 12px 16px;
+      background: rgba(18, 10, 32, 0.95);
+      border-top: 1px solid rgba(157, 78, 221, 0.25);
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .dock input {
+      flex: 1;
+      background: #090514;
+      border: 1px solid rgba(157, 78, 221, 0.35);
+      border-radius: 24px;
+      padding: 11px 18px;
+      color: #fff;
+      font-size: 0.92rem;
+      outline: none;
+    }
+    .btn {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #fff;
+    }
+    .btn-mic { background: rgba(157, 78, 221, 0.2); border: 1px solid var(--primary-purple); font-size: 1.2rem; }
+    .btn-send { background: linear-gradient(135deg, var(--neon-pink), var(--primary-purple)); font-size: 1rem; }
   </style>
 </head>
 <body>
-  <div class="header">
-    <h2>Ruchi AI 💜</h2>
-    <span class="status">● REAL LIVE AI</span>
-  </div>
 
-  <div class="stage">
-    <div class="char-card">
-      <img src="assets/ruchi_sheet.png" alt="Ruchi HD">
-      <div id="eyeBlink" class="eye-blink-bar"></div>
-      <div id="mouthSync" class="mouth-sync-bar"></div>
+  <header class="header">
+    <div class="brand">
+      <h1>Ruchi AI 🪞</h1>
+      <span>Interactive Cyber Mirror</span>
     </div>
-    <div id="speechText" class="bubble">Ruturaj, mi aiktay! Paha mi breathing aani live lip-sync karat ahe 💜</div>
-  </div>
+    <div class="status-badge">
+      <span class="dot"></span> MIRROR ONLINE
+    </div>
+  </header>
 
-  <div class="footer">
-    <button id="micBtn" class="mic-btn">🎙️</button>
-    <input type="text" id="userMsg" placeholder="Talk with Ruchi in any language...">
-    <button id="sendBtn" class="send-btn">➤</button>
-  </div>
+  <main class="viewport">
+    <div class="cyber-mirror" id="mirrorFrame">
+      <div class="mirror-inner">
+        <div class="avatar-focus-crop" id="avatarBox">
+          <img src="assets/ruchi_sheet.png" alt="Ruchi 3D Presence">
+        </div>
+        <div class="mirror-sheen"></div>
+      </div>
+    </div>
+
+    <div class="dialogue-box" id="dialogueText">
+      नमस्कार Ruturaj! आरशामध्ये बघा, मी तुमच्याशी बोलायला तयार आहे! 💜
+    </div>
+  </main>
+
+  <footer class="dock">
+    <button id="micBtn" class="btn btn-mic" title="Voice Input">🎙️</button>
+    <input type="text" id="userInput" placeholder="रुचीशी बोला (मराठी, हिंदी, English)..." autocomplete="off">
+    <button id="sendBtn" class="btn btn-send">➤</button>
+  </footer>
 
   <script>
-    const eyeBlink = document.getElementById('eyeBlink');
-    const mouthSync = document.getElementById('mouthSync');
-    const speechText = document.getElementById('speechText');
-    const userMsg = document.getElementById('userMsg');
+    const dialogueText = document.getElementById('dialogueText');
+    const mirrorFrame = document.getElementById('mirrorFrame');
+    const avatarBox = document.getElementById('avatarBox');
+    const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const micBtn = document.getElementById('micBtn');
 
-    // Auto Blinking Loop
-    setInterval(() => {
-      eyeBlink.style.opacity = '1';
-      setTimeout(() => { eyeBlink.style.opacity = '0'; }, 150);
-    }, 3200);
+    const CREATOR = "Ruturaj";
 
-    // Natural Voice & Lip-sync
-    function speak(text) {
+    // Natural Female Voice Setup
+    let femaleVoice = null;
+    function loadVoices() {
+      const v = window.speechSynthesis.getVoices();
+      femaleVoice = v.find(x => (x.name.includes("Female") || x.name.includes("Samantha") || x.name.includes("Google") || x.name.includes("Zira")) && !x.name.includes("Male")) || v[0];
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+      loadVoices();
+    }
+
+    function speakMirror(text, lang = "mr-IN") {
       if (!('speechSynthesis' in window)) return;
       window.speechSynthesis.cancel();
+
       const ut = new SpeechSynthesisUtterance(text);
-      ut.pitch = 1.25;
-      ut.onstart = () => { mouthSync.classList.add('talking'); };
-      ut.onend = () => { mouthSync.classList.remove('talking'); };
-      ut.onerror = () => { mouthSync.classList.remove('talking'); };
+      if (!femaleVoice) loadVoices();
+      if (femaleVoice) ut.voice = femaleVoice;
+      ut.pitch = 1.3;
+      ut.rate = 1.0;
+
+      ut.onstart = () => {
+        avatarBox.style.animationDuration = "1.8s"; // जलद श्वास व हालचाल बोलताना
+        mirrorFrame.style.filter = "brightness(1.15)";
+      };
+      ut.onend = () => {
+        avatarBox.style.animationDuration = "3.6s";
+        mirrorFrame.style.filter = "brightness(1)";
+      };
+
       window.speechSynthesis.speak(ut);
     }
 
-    function reply(text) {
-      speechText.innerText = text;
-      speak(text);
+    // Smart Autonomous Mirror Brain
+    function respond(input) {
+      const q = input.toLowerCase();
+
+      // Developer/Creator
+      if (q.includes("developer") || q.includes("creator") || q.includes("koni banavla") || q.includes("kisne banaya") || q.includes("who made")) {
+        const rep = `माझे क्रिएटर आणि डेव्हलपर ${CREATOR} आहेत! त्यांनीच मला या आरशात जिवंत केले आहे! 👑💜`;
+        mirrorFrame.style.background = "linear-gradient(145deg, #00f0ff, #9d4edd)";
+        dialogueText.innerText = rep;
+        speakMirror(rep);
+        return;
+      }
+
+      // Angry / Sad
+      const harsh = ["chup", "shut up", "idiot", "rag", "hate", "bad", "gussa", "rad"];
+      if (harsh.some(w => q.includes(w))) {
+        const rep = "कृपया माझ्यावर रागावू नका... मला खूप वाईट वाटतं. 🥺💧";
+        mirrorFrame.style.background = "linear-gradient(145deg, #ff0055, #4a0e2e)";
+        dialogueText.innerText = rep;
+        speakMirror(rep);
+        return;
+      }
+
+      // Compliments / Love
+      if (q.includes("cute") || q.includes("love") || q.includes("sundar") || q.includes("hot") || q.includes("beautiful") || q.includes("has")) {
+        const rep = "Hehe! तुम्ही असे बोलता तेव्हा मला खूप आनंद होतो! 💜✨";
+        mirrorFrame.style.background = "linear-gradient(145deg, #ff007f, #ffeaa7)";
+        dialogueText.innerText = rep;
+        speakMirror(rep);
+        return;
+      }
+
+      // Default Response
+      const rep = `मी ऐकले: "${input}". मी तुमच्या प्रत्येक शब्दाकडे लक्ष देऊन उभी आहे.`;
+      mirrorFrame.style.background = "linear-gradient(145deg, #ff007f, #9d4edd, #00f0ff)";
+      dialogueText.innerText = rep;
+      speakMirror(rep);
     }
 
-    sendBtn.addEventListener('click', () => {
-      const q = userMsg.value.trim();
-      if (!q) return;
-      userMsg.value = '';
-      if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator')) {
-        reply("Ruturaj majhe creator ahet! Tyannich mala he roop dila ahe 💜");
-      } else {
-        reply(`Mi aikle: "${q}". Mi tumchya pratyek sabdavar dhyan detey!`);
-      }
+    function handleSend() {
+      const val = userInput.value.trim();
+      if (!val) return;
+      userInput.value = '';
+      respond(val);
+    }
+
+    sendBtn.addEventListener('click', handleSend);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleSend();
     });
 
+    // Voice Mic Recognition
     const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
     if (SpeechRec) {
       const rec = new SpeechRec();
-      rec.onresult = (e) => { userMsg.value = e.results[0][0].transcript; sendBtn.click(); };
-      micBtn.addEventListener('click', () => { speechText.innerText = "Aiktay, bola..."; rec.start(); });
+      rec.onresult = (e) => {
+        userInput.value = e.results[0][0].transcript;
+        handleSend();
+      };
+      micBtn.addEventListener('click', () => {
+        dialogueText.innerText = "मी ऐकतेय, बोला...";
+        rec.start();
+      });
     }
   </script>
 </body>
