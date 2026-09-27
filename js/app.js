@@ -1,82 +1,150 @@
 const speechBubble = document.getElementById('speechBubble');
-const mouthOverlay = document.getElementById('mouthOverlay');
+const mouthSyncLayer = document.getElementById('mouthSyncLayer');
+const eyeBlinkLayer = document.getElementById('eyeBlinkLayer');
+const avatarBody = document.getElementById('avatarBody');
+const mainAvatarImg = document.getElementById('mainAvatarImg');
 const voiceWave = document.getElementById('voiceWave');
+const emotionStatusText = document.getElementById('emotionStatusText');
 const userInput = document.getElementById('userInput');
 const sendBtn = document.getElementById('sendBtn');
 const micBtn = document.getElementById('micBtn');
 
 const CREATOR = "Ruturaj";
 
-// Emotion replies
-const EMOTIONS = {
-  happy: "I am so happy to be here with you! 💜",
-  thinking: "Hmm, let me think about that for a second...",
-  cute: "Hehe, do you really think I'm cute? Thank you! ✨",
-  sad: "Please don't say that, it makes my heart feel heavy... 🥺",
-  surprised: "Whoa! Really? That totally surprised me!",
-  laughing: "Hahaha! That was hilarious! You always make me laugh! 😄"
-};
+// Automatic Eye Blink Loop
+setInterval(() => {
+  eyeBlinkLayer.classList.add('blinking');
+  setTimeout(() => {
+    eyeBlinkLayer.classList.remove('blinking');
+  }, 160);
+}, 3600);
 
-let femaleVoice = null;
-function loadVoice() {
+// Natural Female Voice
+let naturalFemaleVoice = null;
+function initVoice() {
   const voices = window.speechSynthesis.getVoices();
-  femaleVoice = voices.find(v => (v.name.includes("Female") || v.name.includes("Samantha") || v.name.includes("Zira")) && !v.name.includes("Male")) || voices[0];
+  naturalFemaleVoice = voices.find(v => 
+    (v.name.includes("Female") || v.name.includes("Samantha") || v.name.includes("Google UK English Female") || v.name.includes("Zira")) && !v.name.includes("Male")
+  ) || voices.find(v => v.lang.startsWith("en")) || voices[0];
 }
 if ('speechSynthesis' in window) {
-  window.speechSynthesis.onvoiceschanged = loadVoice;
-  loadVoice();
+  window.speechSynthesis.onvoiceschanged = initVoice;
+  initVoice();
 }
 
-function speakText(text) {
-  if (!('speechSynthesis' in window)) return;
+function speakVoice(text, callback) {
+  if (!('speechSynthesis' in window)) {
+    if (callback) callback();
+    return;
+  }
   window.speechSynthesis.cancel();
 
   const ut = new SpeechSynthesisUtterance(text);
-  if (!femaleVoice) loadVoice();
-  if (femaleVoice) ut.voice = femaleVoice;
-  ut.pitch = 1.3;
+  if (!naturalFemaleVoice) initVoice();
+  if (naturalFemaleVoice) ut.voice = naturalFemaleVoice;
+  ut.pitch = 1.25;
   ut.rate = 1.0;
 
   ut.onstart = () => {
-    mouthOverlay.classList.add('active');
+    mouthSyncLayer.classList.add('speaking');
     voiceWave.classList.add('active');
   };
 
   ut.onend = () => {
-    mouthOverlay.classList.remove('active');
+    mouthSyncLayer.classList.remove('speaking');
     voiceWave.classList.remove('active');
+    if (callback) callback();
   };
 
   ut.onerror = () => {
-    mouthOverlay.classList.remove('active');
+    mouthSyncLayer.classList.remove('speaking');
     voiceWave.classList.remove('active');
+    if (callback) callback();
   };
 
   window.speechSynthesis.speak(ut);
 }
 
-function triggerEmotion(type) {
-  const reply = EMOTIONS[type] || "I'm right here with you! 💜";
-  speechBubble.innerText = reply;
-  speakText(reply);
+// Automatic Emotion & Sentiment Detection
+function analyzeEmotion(text) {
+  const t = text.toLowerCase();
+
+  // 1. Sad / Crying / Scolding
+  const sadAngerWords = ["chup", "shut up", "idiot", "rag", "gussa", "hate", "scold", "bad", "cry", "sad", "dukhi", "rad"];
+  if (sadAngerWords.some(w => t.includes(w))) {
+    return {
+      type: "sad",
+      status: "Feeling: Hurt & Tearful 🥺💧",
+      reply: "Please don't be harsh with me... It makes my heart ache and my eyes tear up.",
+      zoom: "scale(1.08) translateY(-4px)",
+      filter: "brightness(0.9) saturate(0.85)"
+    };
+  }
+
+  // 2. Love / Cute / Compliments
+  const cuteWords = ["cute", "love", "sundar", "prema", "so cute", "hot", "beautiful", "sweet"];
+  if (cuteWords.some(w => t.includes(w))) {
+    return {
+      type: "cute",
+      status: "Feeling: Blushing & Loving ✨💜",
+      reply: "Hehe, you make me blush! You're always so sweet to me.",
+      zoom: "scale(1.05) translateY(-2px)",
+      filter: "brightness(1.08) contrast(1.05)"
+    };
+  }
+
+  // 3. Funny / Laughing / Joy
+  const joyWords = ["haha", "laugh", "joke", "has", "hanso", "funny", "lol", "vinod"];
+  if (joyWords.some(w => t.includes(w))) {
+    return {
+      type: "laugh",
+      status: "Feeling: Laughing & Happy 😄✨",
+      reply: "Hahaha! That was so funny! Talking with you always brings a smile to my face.",
+      zoom: "scale(1.04) translateY(-3px)",
+      filter: "brightness(1.05)"
+    };
+  }
+
+  // 4. Creator / Developer
+  if (t.includes("developer") || t.includes("creator") || t.includes("who made") || t.includes("koni banavla") || t.includes("kisne banaya")) {
+    return {
+      type: "proud",
+      status: "Feeling: Proud & Grateful 👑💜",
+      reply: `My creator and developer is ${CREATOR}! He designed my mind and body.`,
+      zoom: "scale(1.03)",
+      filter: "brightness(1.05)"
+    };
+  }
+
+  // 5. Default Calm Interaction
+  return {
+    type: "calm",
+    status: "Feeling: Attentive & Connected 💜",
+    reply: `I understand: "${text}". I am listening closely to you.`,
+    zoom: "scale(1)",
+    filter: "brightness(1)"
+  };
 }
 
 function handleInput() {
-  const val = userInput.value.trim();
-  if (!val) return;
+  const text = userInput.value.trim();
+  if (!text) return;
   userInput.value = '';
 
-  const q = val.toLowerCase();
-  let botReply = `I heard: "${val}". Ruturaj is my creator! 💜`;
+  const emotion = analyzeEmotion(text);
 
-  if (q.includes("developer") || q.includes("creator") || q.includes("koni banavla") || q.includes("who made")) {
-    botReply = `My creator and developer is ${CREATOR}! He designed and built me. 💜`;
-    triggerEmotion('cute');
-    return;
-  }
+  // Apply Micro Visual Response
+  emotionStatusText.innerText = emotion.status;
+  mainAvatarImg.style.transform = emotion.zoom;
+  mainAvatarImg.style.filter = emotion.filter;
+  speechBubble.innerText = emotion.reply;
 
-  speechBubble.innerText = botReply;
-  speakText(botReply);
+  speakVoice(emotion.reply, () => {
+    setTimeout(() => {
+      mainAvatarImg.style.transform = "scale(1)";
+      mainAvatarImg.style.filter = "brightness(1)";
+    }, 2500);
+  });
 }
 
 sendBtn.addEventListener('click', handleInput);
@@ -84,7 +152,7 @@ userInput.addEventListener('keypress', (e) => {
   if (e.key === 'Enter') handleInput();
 });
 
-// Mic Input
+// Voice Input
 const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
 if (SpeechRec) {
   const rec = new SpeechRec();

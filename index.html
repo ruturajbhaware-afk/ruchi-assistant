@@ -3,8 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - 3D AI Assistant</title>
-  <link rel="stylesheet" href="css/style.css?v=8">
+  <title>Ruchi AI - 3D Autonomous Companion</title>
+  <link rel="stylesheet" href="css/style.css?v=9">
 </head>
 <body>
   <div class="app-layout">
@@ -13,56 +13,54 @@
     <header class="app-header">
       <div class="brand">
         <h2>Ruchi AI 💜</h2>
-        <span class="sub-text">Your 3D AI Assistant</span>
+        <span class="sub-text">Realistic 3D Companion</span>
       </div>
       <div class="status-badge">
         <span class="dot"></span> ONLINE
       </div>
     </header>
 
-    <!-- Main Character Display -->
-    <main class="avatar-display-section">
-      <div class="character-card">
-        <div class="image-wrapper">
-          <img id="mainAvatarImg" src="assets/ruchi_sheet.png" alt="Ruchi AI">
-          <div id="mouthOverlay" class="mouth-sync-layer"></div>
+    <!-- Main Realistic Avatar Motion Stage -->
+    <main class="avatar-stage">
+      <div class="avatar-breathing-frame" id="avatarBody">
+        
+        <!-- Cropped Focused Character Base -->
+        <div class="avatar-viewport">
+          <img id="mainAvatarImg" class="sheet-img" src="assets/ruchi_sheet.png" alt="Ruchi AI">
+          
+          <!-- Realistic Micro-Motion Overlays -->
+          <div class="hair-sway-overlay"></div>
+          <div id="eyeBlinkLayer" class="blink-layer"></div>
+          <div id="mouthSyncLayer" class="mouth-sync-layer"></div>
         </div>
-        <div class="speech-bubble" id="speechBubble">
-          Hey Ruturaj! How can I help you today? 💜
-        </div>
+
+        <!-- Emotion Glow Aura -->
+        <div id="emotionAura" class="emotion-aura"></div>
+      </div>
+
+      <!-- Dialogue Bubble -->
+      <div class="speech-bubble" id="speechBubble">
+        Hey Ruturaj! I am listening to your feelings... 💜
       </div>
     </main>
 
-    <!-- Expression & Mode Switcher -->
-    <section class="expressions-panel">
-      <h3>EXPRESSIONS</h3>
-      <div class="exp-buttons-grid">
-        <button class="exp-btn" onclick="triggerEmotion('happy')">Happy</button>
-        <button class="exp-btn" onclick="triggerEmotion('thinking')">Thinking</button>
-        <button class="exp-btn" onclick="triggerEmotion('cute')">Cute</button>
-        <button class="exp-btn" onclick="triggerEmotion('sad')">Sad</button>
-        <button class="exp-btn" onclick="triggerEmotion('surprised')">Surprised</button>
-        <button class="exp-btn" onclick="triggerEmotion('laughing')">Laughing</button>
-      </div>
-    </section>
-
-    <!-- Bottom Controls & Chat -->
+    <!-- Bottom Audio/Text Controls -->
     <footer class="footer-control-panel">
       <div class="voice-status">
-        <span>Girl Voice (Clone)</span>
+        <span id="emotionStatusText">Feeling: Calm & Attentive</span>
         <div id="voiceWave" class="wave-bars">
           <span></span><span></span><span></span><span></span>
         </div>
       </div>
       <div class="input-row">
-        <button id="micBtn" class="action-btn mic-btn">🎙️</button>
-        <input type="text" id="userInput" placeholder="Talk with Ruchi in any language..." autocomplete="off">
+        <button id="micBtn" class="action-btn mic-btn" title="Speak to Ruchi">🎙️</button>
+        <input type="text" id="userInput" placeholder="Speak or type how you feel..." autocomplete="off">
         <button id="sendBtn" class="action-btn send-btn">➤</button>
       </div>
     </footer>
 
   </div>
 
-  <script src="js/app.js?v=8"></script>
+  <script src="js/app.js?v=9"></script>
 </body>
 </html>
