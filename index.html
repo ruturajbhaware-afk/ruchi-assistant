@@ -1,289 +1,218 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>Ruchi AI 💜</title>
-<style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%;background:#070510;color:white;overflow:hidden;font-family:Arial,sans-serif}
-body{display:flex;flex-direction:column}
-.header{height:52px;padding:0 15px;background:#110d22;display:flex;align-items:center;justify-content:space-between;border-bottom:1px solid #a855f755}
-.header h1{font-size:20px;color:#d8a4ff}
-.status{font-size:11px;color:#10b981}
-.stage{flex:1;display:flex;align-items:center;justify-content:center;position:relative}
-.avatar{
-width:330px;height:440px;position:relative;border-radius:28px;
-background:radial-gradient(circle at 50% 30%,#251442,#070510 85%);
-border:1px solid #a855f755;
-box-shadow:0 0 40px #a855f755;
-animation:float 4s ease-in-out infinite;
-}
-@keyframes float{
-0%,100%{transform:translateY(0)}
-50%{transform:translateY(-7px)}
-}
-svg{width:100%;height:100%}
-.hair{animation:sway 3s infinite alternate ease-in-out;transform-origin:200px 150px}
-@keyframes sway{to{transform:rotate(2deg)}}
-.mouth{transform-origin:200px 252px}
-.dialogue{
-position:absolute;bottom:12px;left:5%;width:90%;
-padding:10px;border-radius:18px;
-background:#120c22e8;border:1px solid #a855f755;
-text-align:center;font-size:13px;
-}
-.footer{height:65px;padding:10px;background:#110d22;border-top:1px solid #a855f755;display:flex;gap:8px}
-input{flex:1;border:1px solid #a855f755;background:#080514;color:white;border-radius:24px;padding:0 15px;outline:none}
-button{width:45px;border:0;border-radius:50%;color:white;font-size:18px}
-.mic{background:#8b5cf633;border:1px solid #a855f7}
-.send{background:linear-gradient(135deg,#a855f7,#ec4899)}
-</style>
-</head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Ruchi AI 💜</title>
+  <style>
+    :root {
+      --bg: #070510;
+      --panel: #110d22;
+      --accent: #a855f7;
+      --pink: #ec4899;
+      --border: rgba(168, 85, 247, 0.35);
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    html, body { height: 100%; height: 100dvh; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
 
+    .header { height: 50px; padding: 0 16px; background: var(--panel); display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--border); flex-shrink: 0; z-index: 10; }
+    .header h1 { font-size: 1.15rem; color: #c084fc; font-weight: 700; }
+    .status { font-size: 0.75rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+    .status::before { content: ""; width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
+
+    .stage { flex: 1; width: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; position: relative; padding: 12px; }
+
+    /* Character Viewport Rig */
+    .avatar-card {
+      width: 310px;
+      height: 410px;
+      position: relative;
+      border-radius: 26px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 35px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.25);
+      background: #000;
+      animation: naturalBreathe 4s infinite ease-in-out;
+      transform-origin: bottom center;
+    }
+
+    @keyframes naturalBreathe {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-6px) scale(1.02); }
+    }
+
+    /* Cropped to main face & chest */
+    .avatar-card img {
+      width: 200%;
+      height: auto;
+      position: absolute;
+      top: -8%;
+      left: -3%;
+      pointer-events: none;
+      filter: contrast(1.05) brightness(1.02);
+    }
+
+    /* Natural Eyelid Overlays */
+    .eyelid {
+      position: absolute;
+      width: 22px;
+      height: 12px;
+      background: #f1cfc2;
+      border-radius: 50%;
+      top: 36.6%;
+      opacity: 0;
+      pointer-events: none;
+      filter: blur(0.5px);
+      transition: opacity 0.05s ease;
+    }
+    .eyelid.left { left: 41.5%; }
+    .eyelid.right { left: 52%; }
+    .eyelid.blink { opacity: 0.95; }
+
+    /* Real-time Dynamic Mouth Layer */
+    .mouth-layer {
+      position: absolute;
+      top: 41.8%;
+      left: 47.8%;
+      width: 18px;
+      height: 6px;
+      background: #c2415d;
+      border-radius: 0 0 8px 8px;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.1s;
+    }
+    .mouth-layer.talking {
+      opacity: 0.85;
+      animation: mouthTalk 0.16s infinite alternate ease-in-out;
+    }
+    @keyframes mouthTalk {
+      0% { height: 3px; transform: translateX(-50%) scaleX(0.85); border-radius: 3px; }
+      100% { height: 11px; transform: translateX(-50%) scaleX(1.1); border-radius: 50%; background: #991b3b; }
+    }
+
+    /* Speech Dialogue */
+    .dialogue-box {
+      position: absolute;
+      bottom: 12px;
+      width: 90%;
+      background: rgba(18, 12, 34, 0.9);
+      backdrop-filter: blur(10px);
+      border: 1px solid var(--border);
+      padding: 10px 16px;
+      border-radius: 18px;
+      font-size: 0.88rem;
+      color: #eedaff;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      z-index: 10;
+    }
+
+    /* Input Footer */
+    .footer { height: 60px; padding: 10px 16px; background: var(--panel); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; z-index: 10; }
+    .footer input { flex: 1; background: #080514; border: 1px solid var(--border); border-radius: 22px; padding: 10px 16px; color: #fff; font-size: 0.92rem; outline: none; }
+    .btn { width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
+    .btn-mic { background: rgba(168, 85, 247, 0.2); border: 1px solid var(--accent); font-size: 1.15rem; }
+    .btn-send { background: linear-gradient(135deg, var(--accent), var(--pink)); font-size: 1rem; }
+  </style>
+</head>
 <body>
 
-<header class="header">
-<h1>Ruchi AI 💜</h1>
-<div class="status">● ONLINE</div>
-</header>
-
-<main class="stage">
-
-<div class="avatar">
-
-<svg viewBox="0 0 400 520">
-
-<defs>
-<linearGradient id="hairGrad" x1="0" y1="0" x2="1" y2="1">
-<stop offset="0%" stop-color="#ff4fae"/>
-<stop offset="50%" stop-color="#8b5cf6"/>
-<stop offset="100%" stop-color="#38bdf8"/>
-</linearGradient>
-
-<radialGradient id="eyeGrad">
-<stop offset="0%" stop-color="#7dd3fc"/>
-<stop offset="70%" stop-color="#0284c7"/>
-<stop offset="100%" stop-color="#172554"/>
-</radialGradient>
-
-<linearGradient id="dress" x1="0" y1="0" x2="0" y2="1">
-<stop stop-color="#8b5cf6"/>
-<stop offset="1" stop-color="#ec4899"/>
-</linearGradient>
-</defs>
-
-<!-- Back Hair -->
-<path class="hair" d="M115 150 Q70 300 110 440 Q155 455 175 280 Z" fill="url(#hairGrad)"/>
-<path class="hair" d="M285 150 Q330 300 290 440 Q245 455 225 280 Z" fill="url(#hairGrad)"/>
-
-<!-- Body -->
-<path d="M140 320 L115 480 L285 480 L260 320Z" fill="url(#dress)"/>
-<text x="200" y="410" fill="white" font-size="13" text-anchor="middle">RUCHI AI</text>
-
-<!-- Face -->
-<path d="M140 160 Q130 260 200 290 Q270 260 260 160 Q260 105 200 105 Q140 105 140 160Z"
-fill="#fff0e8"/>
-
-<!-- Blush -->
-<ellipse cx="158" cy="228" rx="15" ry="7" fill="#f472b6" opacity=".5"/>
-<ellipse cx="242" cy="228" rx="15" ry="7" fill="#f472b6" opacity=".5"/>
-
-<!-- Eyes -->
-<g id="eyes">
-<ellipse cx="170" cy="195" rx="16" ry="19" fill="white"/>
-<ellipse cx="170" cy="195" rx="10" ry="14" fill="url(#eyeGrad)"/>
-<circle cx="166" cy="190" r="4" fill="white"/>
-
-<ellipse cx="230" cy="195" rx="16" ry="19" fill="white"/>
-<ellipse cx="230" cy="195" rx="10" ry="14" fill="url(#eyeGrad)"/>
-<circle cx="226" cy="190" r="4" fill="white"/>
-
-<ellipse id="lidL" cx="170" cy="195" rx="17" ry="1" fill="#ffe2d6"/>
-<ellipse id="lidR" cx="230" cy="195" rx="17" ry="1" fill="#ffe2d6"/>
-</g>
-
-<!-- Nose -->
-<path d="M200 210 Q194 235 200 238" stroke="#d99b91" fill="none"/>
-
-<!-- Mouth -->
-<path id="mouth" class="mouth"
-d="M190 252 Q200 257 210 252"
-stroke="#be185d" stroke-width="4" stroke-linecap="round" fill="none"/>
-
-<!-- Front Hair -->
-<path d="M132 150 Q200 90 268 150 Q245 190 220 163 Q200 185 180 163 Q155 190 132 150Z"
-fill="url(#hairGrad)"/>
-
-<!-- Hair Side Locks -->
-<path d="M145 150 Q110 230 145 330" stroke="#ff4fae" stroke-width="18" fill="none"/>
-<path d="M255 150 Q290 230 255 330" stroke="#38bdf8" stroke-width="18" fill="none"/>
-
-</svg>
-
-<div class="dialogue" id="dialogue">
-Hi Rutu! मी Ruchi आहे 💜
-</div>
-
-</div>
-</main>
-
-<footer class="footer">
-
-<button class="mic" id="mic">🎙️</button>
-
-<input id="input" placeholder="Ruchi शी बोला...">
-
-<button class="send" id="send">➤</button>
-
-</footer>
-
-<script>
-
-const mouth=document.getElementById("mouth");
-const lidL=document.getElementById("lidL");
-const lidR=document.getElementById("lidR");
-const dialogue=document.getElementById("dialogue");
-const input=document.getElementById("input");
-
-let speaking=false;
-
-/* BLINK */
-
-function blink(){
-
-lidL.setAttribute("ry","18");
-lidR.setAttribute("ry","18");
-
-setTimeout(()=>{
-lidL.setAttribute("ry","1");
-lidR.setAttribute("ry","1");
-},150);
-
-}
-
-setInterval(blink,3400);
-
-/* LIP MOVEMENT */
-
-let phase=0;
-
-function lipSync(){
-
-if(speaking){
-
-phase+=.35;
-
-let open=252+Math.abs(Math.sin(phase))*18;
-
-mouth.setAttribute(
-"d",
-`M186 250 Q200 ${open} 214 250 Q200 245 186 250`
-);
-
-mouth.setAttribute("fill","#be185d");
-
-}else{
-
-mouth.setAttribute(
-"d",
-"M190 252 Q200 257 210 252"
-);
-
-mouth.setAttribute("fill","none");
-
-}
-
-requestAnimationFrame(lipSync);
-
-}
-
-lipSync();
-
-/* VOICE */
-
-function speak(text){
-
-if(!("speechSynthesis" in window))return;
-
-speechSynthesis.cancel();
-
-let u=new SpeechSynthesisUtterance(text);
-
-u.lang="mr-IN";
-u.pitch=1.2;
-u.rate=.95;
-
-u.onstart=()=>speaking=true;
-u.onend=()=>speaking=false;
-u.onerror=()=>speaking=false;
-
-dialogue.innerText=text;
-
-speechSynthesis.speak(u);
-
-}
-
-/* CHAT */
-
-function send(){
-
-let q=input.value.trim();
-
-if(!q)return;
-
-input.value="";
-
-if(q.toLowerCase().includes("developer")||
-q.toLowerCase().includes("creator")){
-
-speak("माझा developer आणि creator Ruturaj आहे 💜");
-
-}else{
-
-speak("मी ऐकलं Rutu. तू म्हणालास: "+q);
-
-}
-
-}
-
-document.getElementById("send").onclick=send;
-
-input.addEventListener("keydown",e=>{
-if(e.key==="Enter")send();
-});
-
-/* MICROPHONE */
-
-const SpeechRecognition=
-window.SpeechRecognition||
-window.webkitSpeechRecognition;
-
-if(SpeechRecognition){
-
-const rec=new SpeechRecognition();
-
-rec.lang="mr-IN";
-
-rec.onresult=e=>{
-input.value=e.results[0][0].transcript;
-send();
-};
-
-document.getElementById("mic").onclick=()=>{
-dialogue.innerText="मी ऐकतेय... 🎙️";
-rec.start();
-};
-
-}else{
-
-document.getElementById("mic").onclick=()=>{
-speak("तुझ्या browser मध्ये voice recognition उपलब्ध नाही.");
-};
-
-}
-
-</script>
-
+  <header class="header">
+    <h1>Ruchi AI 💜</h1>
+    <div class="status">ONLINE</div>
+  </header>
+
+  <main class="stage">
+    <div class="avatar-card">
+      <img src="assets/ruchi_sheet.png" alt="Ruchi AI">
+      <div id="eyeL" class="eyelid left"></div>
+      <div id="eyeR" class="eyelid right"></div>
+      <div id="mouth" class="mouth-layer"></div>
+    </div>
+
+    <div class="dialogue-box" id="dialogueText">
+      Namaskar Ruturaj! Paha majha realistic anime look ready ahe 💜
+    </div>
+  </main>
+
+  <footer class="footer">
+    <button id="micBtn" class="btn btn-mic">🎙️</button>
+    <input type="text" id="userInput" placeholder="Ruchi shi bola..." autocomplete="off">
+    <button id="sendBtn" class="btn btn-send">➤</button>
+  </footer>
+
+  <script>
+    const eyeL = document.getElementById('eyeL');
+    const eyeR = document.getElementById('eyeR');
+    const mouth = document.getElementById('mouth');
+    const dialogueText = document.getElementById('dialogueText');
+    const userInput = document.getElementById('userInput');
+    const sendBtn = document.getElementById('sendBtn');
+    const micBtn = document.getElementById('micBtn');
+
+    // Natural Blinking Loop
+    function blink() {
+      eyeL.classList.add('blink');
+      eyeR.classList.add('blink');
+      setTimeout(() => {
+        eyeL.classList.remove('blink');
+        eyeR.classList.remove('blink');
+      }, 140);
+    }
+    setInterval(blink, 3200);
+
+    // Natural Female Voice & Lip Sync
+    let femaleVoice = null;
+    function loadVoices() {
+      const v = window.speechSynthesis.getVoices();
+      femaleVoice = v.find(x => (x.name.includes("Female") || x.name.includes("Samantha") || x.name.includes("Google") || x.name.includes("Zira")) && !x.name.includes("Male")) || v[0];
+    }
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.onvoiceschanged = loadVoices;
+      loadVoices();
+    }
+
+    function speak(text) {
+      if (!('speechSynthesis' in window)) return;
+      window.speechSynthesis.cancel();
+      const ut = new SpeechSynthesisUtterance(text);
+      if (!femaleVoice) loadVoices();
+      if (femaleVoice) ut.voice = femaleVoice;
+      ut.pitch = 1.25;
+
+      ut.onstart = () => { mouth.classList.add('talking'); };
+      ut.onend = () => { mouth.classList.remove('talking'); };
+      ut.onerror = () => { mouth.classList.remove('talking'); };
+
+      dialogueText.innerText = text;
+      window.speechSynthesis.speak(ut);
+    }
+
+    function handleUserInput() {
+      const q = userInput.value.trim();
+      if (!q) return;
+      userInput.value = '';
+
+      if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator') || q.toLowerCase().includes('koni')) {
+        speak("Majhe developer Ruturaj ahet! Tyannich mala banavla ahe! 💜");
+      } else {
+        speak(`Mi aikle Ruturaj: "${q}". Mi tumchya sobat ahe!`);
+      }
+    }
+
+    sendBtn.addEventListener('click', handleUserInput);
+    userInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') handleUserInput();
+    });
+
+    const SpeechRec = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (SpeechRec) {
+      const rec = new SpeechRec();
+      rec.onresult = (e) => { userInput.value = e.results[0][0].transcript; handleUserInput(); };
+      micBtn.addEventListener('click', () => { dialogueText.innerText = "Mi aiktay, bola..."; rec.start(); });
+    }
+  </script>
 </body>
 </html>
