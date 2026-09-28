@@ -3,20 +3,19 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - Full Body Live Companion 💜</title>
+  <title>Ruchi AI - Full 4D Anime 💜</title>
   <style>
     :root {
       --bg: #070510;
       --panel: #110d22;
       --accent: #a855f7;
       --pink: #ec4899;
-      --cyan: #06b6d4;
       --border: rgba(168, 85, 247, 0.35);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; height: 100dvh; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
 
-    /* Header */
+    /* Clean Header */
     .header {
       height: 50px;
       padding: 0 16px;
@@ -29,21 +28,10 @@
       z-index: 10;
     }
     .header h1 { font-size: 1.15rem; color: #c084fc; font-weight: 700; }
-    .header-controls { display: flex; align-items: center; gap: 8px; }
-    .dev-badge {
-      background: rgba(6, 182, 212, 0.15);
-      border: 1px solid var(--cyan);
-      color: var(--cyan);
-      font-size: 0.7rem;
-      font-weight: bold;
-      padding: 3px 8px;
-      border-radius: 8px;
-      cursor: pointer;
-    }
     .status { font-size: 0.72rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 5px; }
     .status::before { content: ""; width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
-    /* Main Stage */
+    /* 4D Stage */
     .stage {
       flex: 1;
       width: 100%;
@@ -52,65 +40,56 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 10px;
+      padding: 8px;
       overflow: hidden;
     }
 
-    /* Full Body Natural Motion Frame */
+    /* Full Body Frame */
     .body-rig {
-      width: 310px;
-      height: 440px;
+      width: 290px;
+      height: 460px;
       position: relative;
-      border-radius: 28px;
+      border-radius: 26px;
       overflow: hidden;
-      border: 1.5px solid var(--border);
-      box-shadow: 0 10px 40px rgba(0,0,0,0.8), 0 0 25px rgba(168, 85, 247, 0.25);
-      background: radial-gradient(circle at 50% 30%, #1c1236, #06040d 95%);
+      border: 1px solid var(--border);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(168, 85, 247, 0.3);
+      background: radial-gradient(circle at 50% 35%, #180f30, #05030a 95%);
       display: flex;
       align-items: center;
       justify-content: center;
-      animation: fullBodySway 4.2s infinite ease-in-out;
+      animation: bodyBreathe 3.8s infinite ease-in-out;
       transform-origin: bottom center;
     }
 
-    /* जिवंत माणसासारखा शरीराचा तोल, श्वास आणि हालचाल */
-    @keyframes fullBodySway {
+    /* Real 4D Body Sway & Breathing */
+    @keyframes bodyBreathe {
       0%, 100% {
-        transform: translateY(0) rotate(0deg) scale(1);
+        transform: translateY(0) scale(1) rotate(0deg);
       }
-      30% {
-        transform: translateY(-5px) rotate(0.4deg) scale(1.015, 1.01); /* श्वास आत घेताना */
+      40% {
+        transform: translateY(-6px) scale(1.015, 1.01) rotate(0.3deg);
       }
       70% {
-        transform: translateY(-2px) rotate(-0.4deg) scale(1.008, 1.005); /* तोल बदलताना */
+        transform: translateY(-2px) scale(1.008, 1.005) rotate(-0.3deg);
       }
     }
 
-    /* Full Body Crop Engine - Focuses on complete head-to-toe model */
-    .full-body-img {
-      width: 480%;
-      height: auto;
+    /* Perfect Head-to-Toe Crop */
+    .body-sprite {
       position: absolute;
-      top: -192%;
-      left: -278%;
+      width: 780px;
+      height: auto;
+      top: -245px;
+      left: -460px;
       pointer-events: none;
       filter: contrast(1.06) brightness(1.02);
-      transition: all 0.3s ease;
+      transition: transform 0.25s ease;
     }
 
-    /* बोलताना हातांची आणि शरीराची जलद हालचाल */
-    .body-rig.talking-motion {
-      animation: talkingBody 0.35s infinite alternate ease-in-out;
-    }
-    @keyframes talkingBody {
-      0% { transform: translateY(-4px) scale(1.01); }
-      100% { transform: translateY(-7px) scale(1.02); }
-    }
-
-    /* Subtitles / Speech Bubble */
+    /* Subtitles */
     .dialogue-box {
       position: absolute;
-      bottom: 12px;
+      bottom: 10px;
       width: 90%;
       background: rgba(18, 12, 34, 0.9);
       backdrop-filter: blur(10px);
@@ -124,27 +103,7 @@
       z-index: 10;
     }
 
-    /* Developer Mode Drawer */
-    #devPanel {
-      position: absolute;
-      top: 55px;
-      left: 10px;
-      right: 10px;
-      background: rgba(9, 6, 18, 0.95);
-      backdrop-filter: blur(12px);
-      border: 1px solid var(--cyan);
-      border-radius: 16px;
-      padding: 12px;
-      z-index: 50;
-      display: none;
-      box-shadow: 0 0 30px rgba(6, 182, 212, 0.3);
-    }
-    #devPanel h3 { font-size: 0.85rem; color: var(--cyan); margin-bottom: 8px; display: flex; justify-content: space-between; }
-    .dev-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 0.75rem; color: #cbd5e1; }
-    .dev-btn-group { display: flex; gap: 6px; margin-top: 10px; }
-    .dev-act-btn { flex: 1; background: rgba(168,85,247,0.2); border: 1px solid var(--border); color: #fff; padding: 6px; border-radius: 8px; font-size: 0.72rem; cursor: pointer; }
-
-    /* Footer */
+    /* Input Footer */
     .footer { height: 60px; padding: 10px 16px; background: var(--panel); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; z-index: 10; }
     .footer input { flex: 1; background: #080514; border: 1px solid var(--border); border-radius: 22px; padding: 10px 16px; color: #fff; font-size: 0.92rem; outline: none; }
     .btn { width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
@@ -156,44 +115,22 @@
 
   <header class="header">
     <h1>Ruchi AI 💜</h1>
-    <div class="header-controls">
-      <button class="dev-badge" onclick="toggleDevPanel()">⚙️ DEV MODE</button>
-      <div class="status">ONLINE</div>
-    </div>
+    <div class="status">ONLINE</div>
   </header>
-
-  <!-- Developer Console Panel -->
-  <div id="devPanel">
-    <h3>
-      <span>DEVELOPER CONSOLE [DEBUG ACTIVE]</span>
-      <span style="cursor:pointer;" onclick="toggleDevPanel()">✖</span>
-    </h3>
-    <div class="dev-grid">
-      <div>Engine: Native 2.5D Full-Rig</div>
-      <div>FPS: <span id="fpsCount" style="color:var(--cyan);">60</span></div>
-      <div>Creator: <span style="color:#c084fc;">Ruturaj</span></div>
-      <div>Memory Hook: Active</div>
-    </div>
-    <div class="dev-btn-group">
-      <button class="dev-act-btn" onclick="setPose('idle')">Pose: Idle</button>
-      <button class="dev-act-btn" onclick="setPose('wave')">Pose: Wave 👋</button>
-      <button class="dev-act-btn" onclick="setPose('talk')">Pose: Talk 🗣️</button>
-    </div>
-  </div>
 
   <main class="stage">
     <div class="body-rig" id="bodyRig">
-      <img id="charSprite" class="full-body-img" src="assets/ruchi_sheet.png" alt="Ruchi Full Body">
+      <img id="charSprite" class="body-sprite" src="assets/ruchi_sheet.png" alt="Ruchi 4D">
     </div>
 
     <div class="dialogue-box" id="dialogueText">
-      नमस्कार Ruturaj! आता माझे संपूर्ण शरीर, हात आणि पाय हालचालीसाठी सज्ज आहेत! 💜
+      Ruturaj, mi aiktay! Dolyampasun bootsparyant majha original 4D look paha 💜
     </div>
   </main>
 
   <footer class="footer">
     <button id="micBtn" class="btn btn-mic">🎙️</button>
-    <input type="text" id="userInput" placeholder="रुचीशी बोला..." autocomplete="off">
+    <input type="text" id="userInput" placeholder="Ruchi shi bola..." autocomplete="off">
     <button id="sendBtn" class="btn btn-send">➤</button>
   </footer>
 
@@ -201,31 +138,11 @@
     const bodyRig = document.getElementById('bodyRig');
     const charSprite = document.getElementById('charSprite');
     const dialogueText = document.getElementById('dialogueText');
-    const devPanel = document.getElementById('devPanel');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const micBtn = document.getElementById('micBtn');
 
-    // 1. Full Body Poses Coordinates (From Ruchi sheet)
-    const POSES = {
-      idle: { left: "-278%", top: "-192%" },   // Full body Idle pose
-      wave: { left: "-342%", top: "-192%" },   // Full body Wave pose
-      talk: { left: "-405%", top: "-192%" }    // Full body Talking pose
-    };
-
-    function setPose(poseKey) {
-      if (POSES[poseKey]) {
-        charSprite.style.left = POSES[poseKey].left;
-        charSprite.style.top = POSES[poseKey].top;
-      }
-    }
-
-    // Toggle Developer Panel
-    function toggleDevPanel() {
-      devPanel.style.display = (devPanel.style.display === 'block') ? 'none' : 'block';
-    }
-
-    // Natural Voice Engine
+    // Natural Voice Setup
     let femaleVoice = null;
     function loadVoices() {
       const v = window.speechSynthesis.getVoices();
@@ -245,16 +162,13 @@
       ut.pitch = 1.25;
 
       ut.onstart = () => {
-        bodyRig.classList.add('talking-motion');
-        setPose('talk');
+        bodyRig.style.animationDuration = "1.8s";
       };
       ut.onend = () => {
-        bodyRig.classList.remove('talking-motion');
-        setPose('idle');
+        bodyRig.style.animationDuration = "3.8s";
       };
       ut.onerror = () => {
-        bodyRig.classList.remove('talking-motion');
-        setPose('idle');
+        bodyRig.style.animationDuration = "3.8s";
       };
 
       dialogueText.innerText = text;
@@ -266,17 +180,10 @@
       if (!q) return;
       userInput.value = '';
 
-      if (q.toLowerCase().includes('hi') || q.toLowerCase().includes('hello')) {
-        setPose('wave');
-        speak("Hey Ruturaj! मी हात हलवून तुमचं स्वागत करतेय!");
-        setTimeout(() => setPose('idle'), 2500);
-        return;
-      }
-
       if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator')) {
-        speak("Ruturaj माझे डेव्हलपर आहेत! त्यांनीच माझ्यासाठी DEV MODE तयार केला आहे! 👑💜");
+        speak("Ruturaj majhe creator aani developer ahet! 👑💜");
       } else {
-        speak(`मी ऐकलं: "${q}". बघा माझं संपूर्ण शरीर जिवंत माणसासारखं हालचाल करतंय!`);
+        speak(`Mi aikle: "${q}". Mi tumchya samor full-body 4D madhe ahe!`);
       }
     }
 
@@ -289,7 +196,7 @@
     if (SpeechRec) {
       const rec = new SpeechRec();
       rec.onresult = (e) => { userInput.value = e.results[0][0].transcript; handleUserInput(); };
-      micBtn.addEventListener('click', () => { dialogueText.innerText = "मी ऐकतेय, बोला..."; rec.start(); });
+      micBtn.addEventListener('click', () => { dialogueText.innerText = "Mi aiktay, bola..."; rec.start(); });
     }
   </script>
 </body>
