@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>Ruchi AI - Full 4D Anime 💜</title>
+  <title>Ruchi AI 💜</title>
   <style>
     :root {
       --bg: #070510;
@@ -15,9 +15,8 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; height: 100dvh; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
 
-    /* Clean Header */
     .header {
-      height: 50px;
+      height: 48px;
       padding: 0 16px;
       background: var(--panel);
       display: flex;
@@ -25,13 +24,11 @@
       align-items: center;
       border-bottom: 1px solid var(--border);
       flex-shrink: 0;
-      z-index: 10;
     }
     .header h1 { font-size: 1.15rem; color: #c084fc; font-weight: 700; }
     .status { font-size: 0.72rem; color: #10b981; font-weight: 600; display: flex; align-items: center; gap: 5px; }
     .status::before { content: ""; width: 7px; height: 7px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
-    /* 4D Stage */
     .stage {
       flex: 1;
       width: 100%;
@@ -44,49 +41,38 @@
       overflow: hidden;
     }
 
-    /* Full Body Frame */
-    .body-rig {
-      width: 290px;
-      height: 460px;
+    /* Single Exact Full Body Viewport */
+    .body-viewport {
+      width: 220px;
+      height: 440px;
       position: relative;
-      border-radius: 26px;
+      border-radius: 24px;
       overflow: hidden;
-      border: 1px solid var(--border);
+      border: 1.5px solid var(--border);
       box-shadow: 0 10px 40px rgba(0,0,0,0.85), 0 0 25px rgba(168, 85, 247, 0.3);
-      background: radial-gradient(circle at 50% 35%, #180f30, #05030a 95%);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      animation: bodyBreathe 3.8s infinite ease-in-out;
+      background: #14101e;
+      animation: humanSway 4s infinite ease-in-out;
       transform-origin: bottom center;
     }
 
-    /* Real 4D Body Sway & Breathing */
-    @keyframes bodyBreathe {
-      0%, 100% {
-        transform: translateY(0) scale(1) rotate(0deg);
-      }
-      40% {
-        transform: translateY(-6px) scale(1.015, 1.01) rotate(0.3deg);
-      }
-      70% {
-        transform: translateY(-2px) scale(1.008, 1.005) rotate(-0.3deg);
-      }
+    /* Natural human breathing & sway */
+    @keyframes humanSway {
+      0%, 100% { transform: translateY(0) scale(1) rotate(0deg); }
+      40% { transform: translateY(-6px) scale(1.015, 1.01) rotate(0.4deg); }
+      75% { transform: translateY(-2px) scale(1.008, 1.005) rotate(-0.4deg); }
     }
 
-    /* Perfect Head-to-Toe Crop */
-    .body-sprite {
+    /* Pixel-accurate zoom on ONLY ONE full body avatar */
+    .sprite-img {
       position: absolute;
-      width: 780px;
+      width: 1350px;
       height: auto;
-      top: -245px;
-      left: -460px;
+      top: -640px;
+      left: -980px;
       pointer-events: none;
-      filter: contrast(1.06) brightness(1.02);
-      transition: transform 0.25s ease;
+      filter: contrast(1.05) brightness(1.02);
     }
 
-    /* Subtitles */
     .dialogue-box {
       position: absolute;
       bottom: 10px;
@@ -103,7 +89,6 @@
       z-index: 10;
     }
 
-    /* Input Footer */
     .footer { height: 60px; padding: 10px 16px; background: var(--panel); border-top: 1px solid var(--border); display: flex; gap: 10px; align-items: center; flex-shrink: 0; z-index: 10; }
     .footer input { flex: 1; background: #080514; border: 1px solid var(--border); border-radius: 22px; padding: 10px 16px; color: #fff; font-size: 0.92rem; outline: none; }
     .btn { width: 42px; height: 42px; border-radius: 50%; border: none; cursor: pointer; display: flex; align-items: center; justify-content: center; color: #fff; flex-shrink: 0; }
@@ -119,12 +104,12 @@
   </header>
 
   <main class="stage">
-    <div class="body-rig" id="bodyRig">
-      <img id="charSprite" class="body-sprite" src="assets/ruchi_sheet.png" alt="Ruchi 4D">
+    <div class="body-viewport" id="bodyFrame">
+      <img class="sprite-img" src="assets/ruchi_sheet.png" alt="Ruchi AI">
     </div>
 
     <div class="dialogue-box" id="dialogueText">
-      Ruturaj, mi aiktay! Dolyampasun bootsparyant majha original 4D look paha 💜
+      Ruturaj, mi aiktay! Full body ready ahe 💜
     </div>
   </main>
 
@@ -135,14 +120,12 @@
   </footer>
 
   <script>
-    const bodyRig = document.getElementById('bodyRig');
-    const charSprite = document.getElementById('charSprite');
+    const bodyFrame = document.getElementById('bodyFrame');
     const dialogueText = document.getElementById('dialogueText');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const micBtn = document.getElementById('micBtn');
 
-    // Natural Voice Setup
     let femaleVoice = null;
     function loadVoices() {
       const v = window.speechSynthesis.getVoices();
@@ -161,15 +144,9 @@
       if (femaleVoice) ut.voice = femaleVoice;
       ut.pitch = 1.25;
 
-      ut.onstart = () => {
-        bodyRig.style.animationDuration = "1.8s";
-      };
-      ut.onend = () => {
-        bodyRig.style.animationDuration = "3.8s";
-      };
-      ut.onerror = () => {
-        bodyRig.style.animationDuration = "3.8s";
-      };
+      ut.onstart = () => { bodyFrame.style.animationDuration = "1.8s"; };
+      ut.onend = () => { bodyFrame.style.animationDuration = "4s"; };
+      ut.onerror = () => { bodyFrame.style.animationDuration = "4s"; };
 
       dialogueText.innerText = text;
       window.speechSynthesis.speak(ut);
@@ -183,7 +160,7 @@
       if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator')) {
         speak("Ruturaj majhe creator aani developer ahet! 👑💜");
       } else {
-        speak(`Mi aikle: "${q}". Mi tumchya samor full-body 4D madhe ahe!`);
+        speak(`Mi aikle: "${q}". Mi tumchya sobat ahe!`);
       }
     }
 
