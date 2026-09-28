@@ -10,15 +10,13 @@
       --panel: #110a1f;
       --accent: #9d4edd;
       --pink: #ff007f;
-      --glow: rgba(157, 78, 221, 0.4);
-      --border: rgba(157, 78, 221, 0.3);
+      --border: rgba(157, 78, 221, 0.35);
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     html, body { height: 100%; height: 100dvh; background: var(--bg); color: #fff; overflow: hidden; display: flex; flex-direction: column; }
 
-    /* Header */
     .header {
-      height: 52px;
+      height: 50px;
       padding: 0 16px;
       background: var(--panel);
       display: flex;
@@ -49,7 +47,6 @@
     }
     .status::before { content: ""; width: 6px; height: 6px; background: #10b981; border-radius: 50%; box-shadow: 0 0 8px #10b981; }
 
-    /* Main Viewport Stage */
     .viewport {
       flex: 1;
       width: 100%;
@@ -62,26 +59,25 @@
       overflow: hidden;
     }
 
-    /* Premium Floating Cyber Card */
-    .avatar-frame {
+    .avatar-rig {
       width: 310px;
       height: 420px;
       position: relative;
       border-radius: 28px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.15);
-      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.9), 0 0 30px var(--glow);
+      border: 1px solid var(--border);
+      box-shadow: 0 12px 45px rgba(0, 0, 0, 0.9), 0 0 25px rgba(157, 78, 221, 0.3);
       background: #000;
-      animation: gentleBreathe 4s infinite ease-in-out;
+      animation: chestBreathe 4s infinite ease-in-out;
       transform-origin: center bottom;
     }
 
-    @keyframes gentleBreathe {
+    @keyframes chestBreathe {
       0%, 100% { transform: translateY(0) scale(1); }
-      50% { transform: translateY(-7px) scale(1.018); }
+      50% { transform: translateY(-6px) scale(1.015); }
     }
 
-    /* Perfect Centered Portrait Crop (Original Ruchi) */
+    /* Core High-Res Image */
     .avatar-img {
       position: absolute;
       width: 195%;
@@ -92,15 +88,101 @@
       filter: contrast(1.05) saturate(1.08) brightness(1.02);
     }
 
-    /* Soft Lighting Overlay */
-    .ambient-sheen {
+    /* Background Cleaner Patch (Removes 'Hey Ruturaj' & 'Your 3D AI Assistant' text) */
+    .bg-text-cleaner {
       position: absolute;
-      inset: 0;
-      background: linear-gradient(180deg, rgba(157, 78, 221, 0.08) 0%, transparent 60%, rgba(7, 4, 13, 0.85) 100%);
+      top: 0;
+      left: 0;
+      width: 38%;
+      height: 45%;
+      background: radial-gradient(circle at 10% 20%, #150f24 40%, rgba(17, 10, 31, 0.85) 80%, transparent 100%);
+      backdrop-filter: blur(12px);
       pointer-events: none;
+      z-index: 2;
     }
 
-    /* Speech Subtitles Box */
+    /* Active Double Eyelid Blink Engine */
+    .eyelid-rig {
+      position: absolute;
+      width: 25px;
+      height: 14px;
+      background: #eed8cc;
+      border-radius: 50%;
+      top: 39.5%;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+      filter: blur(0.4px);
+      box-shadow: 0 1px 2px rgba(80, 40, 30, 0.4);
+      transition: opacity 0.04s ease;
+    }
+    .eyelid-rig.left { left: 40.8%; transform: rotate(4deg); }
+    .eyelid-rig.right { left: 54.2%; transform: rotate(-4deg); }
+    .eyelid-rig.blink-active { opacity: 0.95; }
+
+    /* Active Lip-Sync Mouth Rig */
+    .mouth-rig {
+      position: absolute;
+      top: 46.8%;
+      left: 48.7%;
+      width: 19px;
+      height: 5px;
+      background: #b84058;
+      border-radius: 2px 2px 8px 8px;
+      transform: translateX(-50%);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 3;
+      transition: height 0.05s ease, opacity 0.1s ease;
+    }
+    .mouth-rig.is-talking {
+      opacity: 0.9;
+      animation: mouthTalkCycle 0.15s infinite alternate ease-in-out;
+    }
+    @keyframes mouthTalkCycle {
+      0% { height: 4px; border-radius: 3px; background: #be185d; }
+      50% { height: 10px; border-radius: 50%; background: #881337; }
+      100% { height: 7px; border-radius: 40%; background: #9d174d; }
+    }
+
+    /* Dynamic Hair Physics Strands */
+    .hair-sway-left {
+      position: absolute;
+      top: 36%;
+      left: 17%;
+      width: 48px;
+      height: 180px;
+      background: linear-gradient(135deg, rgba(20, 14, 30, 0.75), transparent);
+      border-radius: 30% 70% 40% 60%;
+      filter: blur(1.5px);
+      pointer-events: none;
+      z-index: 3;
+      animation: hairFlowL 3.2s infinite ease-in-out alternate;
+      transform-origin: top left;
+    }
+    .hair-sway-right {
+      position: absolute;
+      top: 36%;
+      right: 17%;
+      width: 48px;
+      height: 180px;
+      background: linear-gradient(225deg, rgba(20, 14, 30, 0.75), transparent);
+      border-radius: 70% 30% 60% 40%;
+      filter: blur(1.5px);
+      pointer-events: none;
+      z-index: 3;
+      animation: hairFlowR 3.6s infinite ease-in-out alternate;
+      transform-origin: top right;
+    }
+    @keyframes hairFlowL {
+      0% { transform: rotate(0deg) skewX(0deg); }
+      100% { transform: rotate(-2.5deg) skewX(-1.5deg); }
+    }
+    @keyframes hairFlowR {
+      0% { transform: rotate(0deg) skewX(0deg); }
+      100% { transform: rotate(2.5deg) skewX(1.5deg); }
+    }
+
     .dialogue-box {
       position: absolute;
       bottom: 14px;
@@ -118,7 +200,6 @@
       z-index: 10;
     }
 
-    /* Bottom Input Dock */
     .footer {
       height: 62px;
       padding: 10px 16px;
@@ -165,13 +246,27 @@
   </header>
 
   <main class="viewport">
-    <div class="avatar-frame" id="avatarCard">
+    <div class="avatar-rig" id="avatarCard">
+      <!-- Main Photo -->
       <img class="avatar-img" src="assets/ruchi_sheet.png" alt="Ruchi AI">
-      <div class="ambient-sheen"></div>
+      
+      <!-- Text Remover Patch -->
+      <div class="bg-text-cleaner"></div>
+
+      <!-- Hair Dynamics -->
+      <div class="hair-sway-left"></div>
+      <div class="hair-sway-right"></div>
+
+      <!-- Eyelids -->
+      <div id="eyeLeft" class="eyelid-rig left"></div>
+      <div id="eyeRight" class="eyelid-rig right"></div>
+
+      <!-- Live Lip Sync Mouth -->
+      <div id="ruchiMouth" class="mouth-rig"></div>
     </div>
 
     <div class="dialogue-box" id="dialogueText">
-      नमस्कार Ruturaj! मी तुमची रुची आहे. बोला, काय मदत करू? 💜
+      नमस्कार Ruturaj! आता माझे डोळे, केस आणि ओठ तुमच्या आवाजासोबत सक्रिय आहेत 💜
     </div>
   </main>
 
@@ -183,12 +278,26 @@
 
   <script>
     const avatarCard = document.getElementById('avatarCard');
+    const eyeLeft = document.getElementById('eyeLeft');
+    const eyeRight = document.getElementById('eyeRight');
+    const ruchiMouth = document.getElementById('ruchiMouth');
     const dialogueText = document.getElementById('dialogueText');
     const userInput = document.getElementById('userInput');
     const sendBtn = document.getElementById('sendBtn');
     const micBtn = document.getElementById('micBtn');
 
-    // Natural Voice Engine
+    // 1. Natural Eye Blinking Logic
+    function triggerBlink() {
+      eyeLeft.classList.add('blink-active');
+      eyeRight.classList.add('blink-active');
+      setTimeout(() => {
+        eyeLeft.classList.remove('blink-active');
+        eyeRight.classList.remove('blink-active');
+      }, 150);
+    }
+    setInterval(triggerBlink, 3400);
+
+    // 2. Speech Engine & Lip-Sync Coordination
     let femaleVoice = null;
     function loadVoices() {
       const v = window.speechSynthesis.getVoices();
@@ -207,9 +316,18 @@
       if (femaleVoice) ut.voice = femaleVoice;
       ut.pitch = 1.25;
 
-      ut.onstart = () => { avatarCard.style.animationDuration = "1.8s"; };
-      ut.onend = () => { avatarCard.style.animationDuration = "4s"; };
-      ut.onerror = () => { avatarCard.style.animationDuration = "4s"; };
+      ut.onstart = () => {
+        ruchiMouth.classList.add('is-talking');
+        avatarCard.style.animationDuration = "2s";
+      };
+      ut.onend = () => {
+        ruchiMouth.classList.remove('is-talking');
+        avatarCard.style.animationDuration = "4s";
+      };
+      ut.onerror = () => {
+        ruchiMouth.classList.remove('is-talking');
+        avatarCard.style.animationDuration = "4s";
+      };
 
       dialogueText.innerText = text;
       window.speechSynthesis.speak(ut);
@@ -223,7 +341,7 @@
       if (q.toLowerCase().includes('developer') || q.toLowerCase().includes('creator') || q.toLowerCase().includes('koni')) {
         speak("माझे क्रिएटर आणि डेव्हलपर Ruturaj आहेत! 👑💜");
       } else {
-        speak(`मी ऐकले: "${q}". मी तुमच्यासोबत आहे!`);
+        speak(`मी ऐकले: "${q}". बघा माझे ओठ, केस आणि डोळे आता रिअल-टाइम हालचाल करत आहेत!`);
       }
     }
 
